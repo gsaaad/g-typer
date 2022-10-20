@@ -1,0 +1,13 @@
+nav {
+  height: 10vh;
+  width: 100%;
+}
+.nav-title {
+  font-size: 2rem;
+  color: black;
+  font-weight: 600;
+  margin: 2% 25%;
+  width: 50%;
+  border: 5px solid goldenrod;
+  border-radius: 5%;
+}

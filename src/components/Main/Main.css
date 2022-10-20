@@ -1,0 +1,236 @@
+@property --rotate {
+  syntax: "<angle>";
+  initial-value: 44deg;
+  inherits: false;
+}
+
+.main-container {
+  min-height: 95vh;
+  margin-top: 15%;
+  text-align: center;
+  padding: 5%;
+  width: 100%;
+  background-color: #777;
+}
+.G-title {
+  font-weight: 700;
+  color: rgb(0, 255, 229);
+}
+
+.progress {
+  display: inline-block;
+  width: 95%;
+  height: 35px;
+  border-radius: 20px;
+  background: #222020;
+  box-shadow: 0px 2px 20px #75bcdd;
+  margin: 4%;
+}
+.bar {
+  border-radius: 20px;
+  width: 100%;
+  height: 100%;
+  transition: width;
+  transition-duration: 1s;
+  transition-timing-function: cubic-bezier(0.36, 0.55, 0.63, 0.48);
+}
+.shadow {
+  box-shadow: 0px 45px 50px rgba(0, 0, 0, 0.25);
+}
+.floor {
+  background-color: #00b9f2;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 80 80'%3E%3Cg fill='%2392278f' fill-opacity='0.71'%3E%3Cpath fill-rule='evenodd' d='M0 0h40v40H0V0zm40 40h40v40H40V40zm0-40h2l-2 2V0zm0 4l4-4h2l-6 6V4zm0 4l8-8h2L40 10V8zm0 4L52 0h2L40 14v-2zm0 4L56 0h2L40 18v-2zm0 4L60 0h2L40 22v-2zm0 4L64 0h2L40 26v-2zm0 4L68 0h2L40 30v-2zm0 4L72 0h2L40 34v-2zm0 4L76 0h2L40 38v-2zm0 4L80 0v2L42 40h-2zm4 0L80 4v2L46 40h-2zm4 0L80 8v2L50 40h-2zm4 0l28-28v2L54 40h-2zm4 0l24-24v2L58 40h-2zm4 0l20-20v2L62 40h-2zm4 0l16-16v2L66 40h-2zm4 0l12-12v2L70 40h-2zm4 0l8-8v2l-6 6h-2zm4 0l4-4v2l-2 2h-2z'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.card-container {
+  display: flex;
+  flex-direction: column;
+  /* background-image: linear-gradient(
+    var(--rotate),
+    #74e1ff,
+    #3b0beb,
+    35%,
+    #2d026e
+  );
+  animation: spin 5.5 linear infinite; */
+  background-color: rgb(2, 0, 92);
+  box-shadow: 0px 0px 25px rgba(0, 75, 75, 0.747);
+  animation: example 6s linear infinite;
+  box-sizing: border-box;
+  border-radius: 5%;
+  padding: 1.5%;
+}
+.wrapper {
+  position: relative;
+  font-family: sans-serif;
+  font-size: 14px;
+  width: max-content;
+}
+
+.placeholder {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.75;
+}
+
+.input:placeholder-shown + .placeholder {
+  opacity: 0;
+}
+.ready-btn {
+  margin-top: 14%;
+  margin-right: 10%;
+  animation: example 6s linear infinite;
+  font-weight: 600;
+  border-radius: 14%;
+  box-shadow: 0px 5px 50px rgb(0, 255, 255);
+  background-color: rgb(28, 123, 179);
+  font-size: 3/75rem;
+}
+
+.card2 {
+  align-items: center;
+  border-radius: 5%;
+  background: #191c29;
+  height: 25vh;
+  font-size: 1.75rem;
+  color: white;
+  overflow: hidden;
+  display: flex;
+  width: 100%;
+}
+.words {
+  margin-left: 35px;
+}
+
+.totalWords::first-letter {
+  font-size: 3.3rem;
+  color: teal;
+}
+.card {
+  align-items: center;
+  margin: 10px 0px;
+  border-radius: 5%;
+  background: #191c29;
+  height: 25vh;
+  width: 100%;
+  font-size: 1.75rem;
+  color: white;
+  padding-left: 40px;
+  display: flex;
+}
+.high-score {
+  background: #191c29;
+  display: flex;
+  flex-direction: column;
+  color: #e3e3e3;
+  padding: 2%;
+  border-radius: 5%;
+}
+.score-list {
+  display: flex;
+  flex-wrap: wrap;
+}
+li {
+  list-style: none;
+}
+.save-card {
+  display: flex;
+  flex-direction: column;
+  width: 85%;
+  margin: auto;
+}
+
+.saveInput {
+  padding: 3%;
+  font-size: 2rem;
+  width: 85%;
+  border-radius: 5%;
+  color: #191c29;
+}
+.saveInput::placeholder {
+  color: #191c29;
+  font-size: 2rem;
+}
+.saveBtn {
+  background: rgb(7, 204, 178);
+  font-size: 2rem;
+  margin: 9%;
+  border-radius: 5%;
+  font-weight: 600;
+  border: 2px solid goldenrod;
+  box-shadow: 3px -3px 10px goldenrod;
+}
+.errorCount {
+  background-color: beige;
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding: 5px;
+  border-radius: 10px;
+  color: rgb(187, 33, 6);
+}
+.rate {
+  background-color: beige;
+  font-size: 1.5rem;
+  margin-left: 5%;
+  padding: 5px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: seagreen;
+}
+.rate-error {
+  display: flex;
+}
+@keyframes spin {
+  0% {
+    --rotate: 22deg;
+  }
+  50% {
+    --rotate: 300deg;
+  }
+  100% {
+    --rotate: 360deg;
+  }
+}
+@keyframes example {
+  0% {
+    background-color: rgb(9, 56, 158);
+  }
+  10% {
+    background-color: rgb(2, 105, 201);
+  }
+  20% {
+    background-color: rgb(10, 148, 212);
+  }
+  40% {
+    background-color: rgb(7, 204, 178);
+  }
+  50% {
+    background-color: rgb(0, 255, 213);
+  }
+  60% {
+    background-color: rgb(7, 204, 178);
+  }
+  70% {
+    background-color: rgb(0, 255, 213);
+  }
+  80% {
+    background-color: rgb(7, 204, 178);
+  }
+  90% {
+    background-color: rgb(10, 148, 212);
+  }
+  100% {
+    background-color: rgb(2, 0, 92);
+  }
+}
+
+@media only screen and (min-width: 730px) {
+  .ready-btn {
+    margin: 8%;
+  }
+}
+@media only screen and (min-width: 1050px) {
+  .ready-btn {
+    margin: 5%;
+  }
+}
