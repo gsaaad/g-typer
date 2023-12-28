@@ -76,6 +76,7 @@
 .input:placeholder-shown + .placeholder {
   opacity: 0;
 }
+
 .ready-btn {
   margin-top: 14%;
   margin-right: 10%;

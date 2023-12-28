@@ -7,6 +7,7 @@ const Main = () => {
   var errorRef = useRef(null);
   var wordsRef = useRef(null);
   const [slide, setSlide] = useState({ transform: "translate(100px)" });
+  const [typeSlide, setTypeSlide] = useState({ transform: "translate(0px)" });
   const [errorCount, setErrorCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [distance, setDistance] = useState(100);
@@ -49,6 +50,7 @@ const Main = () => {
 
     if (value === wordByWord) {
       setSlide({ transform: `translateX(${distance}px)` });
+      // setTypeSlide({ transform: `translateX(-${distance}px)` });
       setDistance(distance - 16.5);
       setCorrectCount(correctCount + 1);
     } else {
@@ -72,7 +74,7 @@ const Main = () => {
       }, 1000);
     };
     // 120 seconds, so 2 minutes of typing
-    countDown(35);
+    countDown(190000000);
   };
   const handleHighScoreInput = (e) => {
     e.preventDefault();
