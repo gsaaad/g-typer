@@ -5,18 +5,32 @@
 }
 
 .main-container {
-  min-height: 94vh;
   text-align: center;
-  padding: 5%;
+  padding: 3.5% 5.5%;
   width: 100%;
+  min-height: 88.5vh;
   background-color: #777;
+  border: 2px solid lime;
+}
+.secondary-container {
+  border: 2px solid red;
+  margin-top: -3%;
 }
 h2{
   color:#040115
+
 }
 .G-title {
   font-weight: 700;
   color: rgb(0, 255, 229);
+}
+
+.challenge-title{
+  border: 2px solid #002fff;
+  border-radius: 5%;
+  padding: 1%;
+  background-color: #002fff;
+
 }
 
 .progress {
@@ -168,7 +182,7 @@ li {
   background-color: beige;
   font-size: 1.5rem;
   font-weight: 600;
-  padding: 5px;
+  padding: 7.5px;
   border-radius: 10px;
   color: rgb(187, 33, 6);
 }
@@ -176,7 +190,7 @@ li {
   background-color: beige;
   font-size: 1.5rem;
   margin-left: 5%;
-  padding: 5px;
+  padding: 7.5px;
   border-radius: 10px;
   font-weight: 700;
   color: seagreen;

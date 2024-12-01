@@ -45,7 +45,7 @@ const Main = () => {
     const errorP = errorRef;
     const rateWords = wordsRef;
     errorP.current.innerHTML = "Error Count: " + errorCount;
-    rateWords.current.innerHTML = "Correct Letters:" + correctCount;
+    rateWords.current.innerHTML = "Correct Letters: " + correctCount;
   }, [errorCount, correctCount]);
 
   var totalWords = words.join(" ");
@@ -69,6 +69,9 @@ const Main = () => {
 
   const handleShowComponent = (e) => {
     e.preventDefault();
+    // find className="challenge-title" document and hide it
+    const challengeTitle = document.querySelector(".challenge-title");
+    challengeTitle.style.display = "none";
     setStyleComponent({ display: "block" });
     setStyleReadyComponent({ display: "none" });
   
@@ -104,11 +107,13 @@ const Main = () => {
   };
   return (
     <div className="main-container">
-      <div>
+      <div className="secondary-container">
+        <div className="challenge-title">
         <h2>
           Do you have what it takes to be a{" "}
           <span className="G-title ">G-Typer?</span>
         </h2>
+        </div>
         <div className="progress">
           <div className="bar shadow floor"></div>
         </div>
