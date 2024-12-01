@@ -5,11 +5,14 @@
 }
 
 .main-container {
-  min-height: 95vh;
+  min-height: 94vh;
   text-align: center;
   padding: 5%;
   width: 100%;
   background-color: #777;
+}
+h2{
+  color:#040115
 }
 .G-title {
   font-weight: 700;

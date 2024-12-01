@@ -74,8 +74,7 @@ const Main = () => {
       }, 1000);
     };
     // 120 seconds, so 2 minutes of typing
-    countDown(190000000);
-  };
+    countDown(120000);  };
   const handleHighScoreInput = (e) => {
     e.preventDefault();
     setHighScoreName(e.target.value);
