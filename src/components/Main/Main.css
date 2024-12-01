@@ -111,11 +111,25 @@ h2{
   background: #191c29;
   height: 25vh;
   font-size: 1.75rem;
-  color: white;
   overflow: hidden;
   display: flex;
   width: 100%;
 }
+
+.word {
+  display: flex; /* Keeps letters of a word together */
+}
+
+.letter {
+  font-size: 1.75rem; /* Adjust for desired size */
+  color: black; /* Default letter color */
+}
+
+.space {
+  width: 10px; /* Space width */
+  display: inline-block; /* Ensures proper spacing behavior */
+}
+
 .words {
   margin-left: 35px;
 }

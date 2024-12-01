@@ -50,22 +50,52 @@ const Main = () => {
 
   var totalWords = words.join(" ");
 
-  const handleTyping = (e) => {
-    const value = e.target.value;
+  const highlightWords = (value, wordByWord) => {
+    const wordsElement = document.querySelector(".card2");
+    const letterSpans = wordsElement.querySelectorAll("span");
+  
+    // Iterate through all letter spans and apply styles
+    letterSpans.forEach((span, index) => {
+      if (index < value.length) {
+        // Highlight correct letters in green
+        span.style.color = value[index] === wordByWord[index] ? "green" : "red";
+      } else {
+        // Reset color for letters not yet typed
+        span.style.color = "black";
+      }
+    });
+  };
+  
 
-    setInputValue(value); // Use state instead of direct DOM manipulation
+  const handleTyping = (e) => {
+    const value = e.target.value; // User's current input
+    const valueLength = value.length; // Length of input
+    const wordByWord = totalWords.slice(0, valueLength); // Slice of correct letters
+    const userLetter = value[valueLength - 1]; // Current letter
   
-    const valueLength = value.length;
-    const wordByWord = totalWords.slice(0, valueLength);
+    console.log("Current value: ", value);
+    console.log("Current letter: ", userLetter);
+    console.log("Word by word: ", wordByWord);
   
+    setInputValue(value); // Update state for controlled input
+  
+    // Highlight words dynamically based on input
+    highlightWords(value, wordByWord);
+  
+    // Check for correctness
     if (value === wordByWord) {
+      console.log("Correct letter", userLetter);
+  
+      // Update slide and scores
       setSlide({ transform: `translateX(${distance}px)` });
-      setDistance(distance - 16.5);
+      setDistance((prev) => prev - 16.5);
       setCorrectCount((prev) => prev + 1);
     } else {
+      console.log("Incorrect letter", userLetter);
       setErrorCount((prev) => prev + 1);
     }
   };
+  
 
   const handleShowComponent = (e) => {
     e.preventDefault();
@@ -109,10 +139,10 @@ const Main = () => {
     <div className="main-container">
       <div className="secondary-container">
         <div className="challenge-title">
-        <h2>
-          Do you have what it takes to be a{" "}
-          <span className="G-title ">G-Typer?</span>
-        </h2>
+          <h2>
+            Do you have what it takes to be a{" "}
+            <span className="G-title ">G-Typer?</span>
+          </h2>
         </div>
         <div className="progress">
           <div className="bar shadow floor"></div>
@@ -148,11 +178,12 @@ const Main = () => {
               <p className="rate m-2" ref={wordsRef}></p>
             </div>
 
-        <SaveCard
-          highScoreName={highScoreName}
-          handleHighScoreInput={handleHighScoreInput}
-          handleHighScore={handleHighScore}
-        />          </div>
+            <SaveCard
+              highScoreName={highScoreName}
+              handleHighScoreInput={handleHighScoreInput}
+              handleHighScore={handleHighScore}
+            />
+          </div>
         </div>
       </div>
       <div className="card" style={styleReadyComponent}>
@@ -161,16 +192,27 @@ const Main = () => {
         </button>
       </div>
       <div className="card-container" style={styleComponent}>
-        <div className="card2">
-          {words.map((word) => (
-            <p className="words " style={slide} key={word}>
-              <span>{word}</span>
-            </p>
-          ))}
-        </div>
-        
-        
-        <input className="card input" id="input" value={inputValue} onChange={handleTyping} ref={inputRef} />
+      <div className="card2">
+  {words.map((word, wordIndex) => (
+    <div className="word" key={wordIndex} style={slide}>
+      {word.split("").map((letter, letterIndex) => (
+        <span key={`${wordIndex}-${letterIndex}`} className="letter">
+          {letter}
+        </span>
+      ))}
+      {/* Add a space only if it's not the last word */}
+      {wordIndex < words.length - 1 && <span className="space"> </span>}
+    </div>
+  ))}
+</div>
+
+        <input
+          className="card input"
+          id="input"
+          value={inputValue}
+          onChange={handleTyping}
+          ref={inputRef}
+        />
         <div className="rate-error">
           <p className="errorCount" ref={errorRef}></p>
           <p className="rate" ref={wordsRef}></p>
@@ -181,4 +223,5 @@ const Main = () => {
     </div>
   );
 };
+
 export default Main;
