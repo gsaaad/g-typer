@@ -52,20 +52,31 @@ const Main = () => {
 
   const highlightWords = (value, wordByWord) => {
     const wordsElement = document.querySelector(".card2");
+    if (!wordsElement) return; // Add null check
     const letterSpans = wordsElement.querySelectorAll("span");
   
     // Iterate through all letter spans and apply styles
     letterSpans.forEach((span, index) => {
       if (index < value.length) {
-        // Highlight correct letters in green
-        span.style.color = value[index] === wordByWord[index] ? "green" : "red";
+        // If the current letter is correct, highlight in green
+        if (value[index] === wordByWord[index]) {
+            if (span.style.color !== "red" && (index === 0 || (letterSpans[index - 1].style.color !== "red" && (letterSpans[index - 1].textContent !== " " || (index > 1 && letterSpans[index - 2].style.color !== "red"))))) { // Only turn green if not already red and previous letter is not red or a space, and if previous letter is space, check the letter before that
+        span.style.color = "green";
+          }
+        } else {
+          // Incorrect letters should remain red
+          span.style.color = "red";
+        }
       } else {
-        // Reset color for letters not yet typed
-        span.style.color = "black";
+        // Reset color for letters not yet typed, but keep red if previous letter is red
+        if (index > 0 && letterSpans[index - 1].style.color === "red") {
+          span.style.color = "red";
+        } else {
+          span.style.color = "black";
+        }
       }
     });
   };
-  
 
   const handleTyping = (e) => {
     const value = e.target.value; // User's current input
@@ -88,7 +99,7 @@ const Main = () => {
   
       // Update slide and scores
       setSlide({ transform: `translateX(${distance}px)` });
-      setDistance((prev) => prev - 16.5);
+      setDistance((prev) => prev - 10.5);
       setCorrectCount((prev) => prev + 1);
     } else {
       console.log("Incorrect letter", userLetter);
@@ -120,7 +131,7 @@ const Main = () => {
 
 
     // 120 seconds, so 2 minutes of typing
-    countDown(120000);  };
+    countDown(120);  };
   const handleHighScoreInput = (e) => {
     e.preventDefault();
     setHighScoreName(e.target.value);

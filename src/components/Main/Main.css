@@ -130,9 +130,6 @@ h2{
   display: inline-block; /* Ensures proper spacing behavior */
 }
 
-.words {
-  margin-left: 35px;
-}
 
 .totalWords::first-letter {
   font-size: 3.3rem;
