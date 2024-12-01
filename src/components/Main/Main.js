@@ -6,6 +6,8 @@ const Main = () => {
   const [words, setWords] = useState([]);
   var errorRef = useRef(null);
   var wordsRef = useRef(null);
+  const inputRef = useRef(null); // Ref to manage input focus
+
   const [slide, setSlide] = useState({ transform: "translate(100px)" });
   const [typeSlide, setTypeSlide] = useState({ transform: "translate(0px)" });
   const [errorCount, setErrorCount] = useState(0);
@@ -22,16 +24,18 @@ const Main = () => {
   const [highScoreName, setHighScoreName] = useState("");
   var winners = localStorage.getItem("G-Typers") || [];
 
-  const generateWords = () => {
-    for (let i = 0; i < 400; i++) {
-      var word = randomwords();
-      if (!words.includes(word)) {
-        words.push(word);
-      }
+  // Generate words
+  useEffect(() => {
+    const generatedWords = randomwords(400);
+    setWords(generatedWords);
+  }, []);
+
+  // Focus input when typing area becomes visible
+  useEffect(() => {
+    if (styleComponent.display === "block" && inputRef.current) {
+      inputRef.current.focus();
     }
-  };
-  generateWords();
-  //   generateWords();
+  }, [styleComponent]);
 
   useEffect(() => {
     const errorP = errorRef;
@@ -62,6 +66,13 @@ const Main = () => {
     e.preventDefault();
     setStyleComponent({ display: "block" });
     setStyleReadyComponent({ display: "none" });
+    // focus on the input
+    // Focus on the input field
+    if (inputRef.current) {
+      inputRef.current.focus();
+       }
+  
+
     const countDown = (i) => {
       var int = setInterval(function () {
         const bar = document.querySelector(".bar");
@@ -73,6 +84,8 @@ const Main = () => {
         bar.style.width = `${Math.floor((i / 120) * 100)}%`;
       }, 1000);
     };
+
+
     // 120 seconds, so 2 minutes of typing
     countDown(120000);  };
   const handleHighScoreInput = (e) => {
@@ -150,14 +163,13 @@ const Main = () => {
       </div>
       <div className="card-container" style={styleComponent}>
         <div className="card2">
-          {/* <p className="totalWords">{totalWords}</p> */}
           {words.map((word) => (
             <p className="words " style={slide} key={word}>
               <span>{word}</span>
             </p>
           ))}
         </div>
-        <input className="card input" id="input" onChange={handleTyping} />
+        <input className="card input" id="input" onChange={handleTyping} ref={inputRef} />
         <div className="rate-error">
           <p className="errorCount" ref={errorRef}></p>
           <p className="rate" ref={wordsRef}></p>
