@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import "./Main.css";
 import randomwords from "random-words";
+import SaveCard from "../SaveCard/SaveCard";
 
 const Main = () => {
   const [words, setWords] = useState([]);
@@ -9,10 +10,11 @@ const Main = () => {
   const inputRef = useRef(null); // Ref to manage input focus
 
   const [slide, setSlide] = useState({ transform: "translate(100px)" });
-  const [typeSlide, setTypeSlide] = useState({ transform: "translate(0px)" });
+  // const [typeSlide, setTypeSlide] = useState({ transform: "translate(100px)" });
   const [errorCount, setErrorCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [distance, setDistance] = useState(100);
+  const [inputValue, setInputValue] = useState("");
   const [styleComponent, setStyleComponent] = useState({ display: "none" });
   const [styleReadyComponent, setStyleReadyComponent] = useState({
     display: "block",
@@ -27,15 +29,17 @@ const Main = () => {
   // Generate words
   useEffect(() => {
     const generatedWords = randomwords(400);
+    // add 12 spaces in the beginning
+    generatedWords[0] = generatedWords[0];
+    
     setWords(generatedWords);
   }, []);
 
-  // Focus input when typing area becomes visible
   useEffect(() => {
     if (styleComponent.display === "block" && inputRef.current) {
-      inputRef.current.focus();
+      inputRef.current.focus();;
     }
-  }, [styleComponent]);
+  }, [styleComponent, words]);
 
   useEffect(() => {
     const errorP = errorRef;
@@ -47,18 +51,19 @@ const Main = () => {
   var totalWords = words.join(" ");
 
   const handleTyping = (e) => {
-    e.preventDefault();
-    var value = e.target.value;
-    var valueLength = value.length;
-    var wordByWord = totalWords.slice(0, valueLength);
+    const value = e.target.value;
 
+    setInputValue(value); // Use state instead of direct DOM manipulation
+  
+    const valueLength = value.length;
+    const wordByWord = totalWords.slice(0, valueLength);
+  
     if (value === wordByWord) {
       setSlide({ transform: `translateX(${distance}px)` });
-      // setTypeSlide({ transform: `translateX(-${distance}px)` });
       setDistance(distance - 16.5);
-      setCorrectCount(correctCount + 1);
+      setCorrectCount((prev) => prev + 1);
     } else {
-      setErrorCount(errorCount + 1);
+      setErrorCount((prev) => prev + 1);
     }
   };
 
@@ -66,11 +71,6 @@ const Main = () => {
     e.preventDefault();
     setStyleComponent({ display: "block" });
     setStyleReadyComponent({ display: "none" });
-    // focus on the input
-    // Focus on the input field
-    if (inputRef.current) {
-      inputRef.current.focus();
-       }
   
 
     const countDown = (i) => {
@@ -142,18 +142,12 @@ const Main = () => {
               <p className="errorCount m-2" ref={errorRef}></p>
               <p className="rate m-2" ref={wordsRef}></p>
             </div>
-            <div className="save-card">
-              <form onSubmit={handleHighScore}>
-                <input
-                  className="saveInput"
-                  placeholder="Name..."
-                  value={highScoreName}
-                  onChange={handleHighScoreInput}
-                />
-                <button className="saveBtn">Save Results</button>
-              </form>
-            </div>
-          </div>
+
+        <SaveCard
+          highScoreName={highScoreName}
+          handleHighScoreInput={handleHighScoreInput}
+          handleHighScore={handleHighScore}
+        />          </div>
         </div>
       </div>
       <div className="card" style={styleReadyComponent}>
@@ -169,7 +163,9 @@ const Main = () => {
             </p>
           ))}
         </div>
-        <input className="card input" id="input" onChange={handleTyping} ref={inputRef} />
+        
+        
+        <input className="card input" id="input" value={inputValue} onChange={handleTyping} ref={inputRef} />
         <div className="rate-error">
           <p className="errorCount" ref={errorRef}></p>
           <p className="rate" ref={wordsRef}></p>
