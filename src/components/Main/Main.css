@@ -152,6 +152,12 @@ h2{
   padding: 2%;
   border-radius: 5%;
 }
+.new-score{
+  display: flex;
+  flex-direction: column;
+  color: yellow;
+  border-radius: 5%;
+}
 .score-list {
   display: flex;
   flex-wrap: wrap;
@@ -180,10 +186,10 @@ li {
 .saveBtn {
   background: rgb(7, 204, 178);
   font-size: 2rem;
-  margin: 9%;
+  margin: 5%;
+  padding: 2%;
   border-radius: 5%;
   font-weight: 600;
-  box-shadow: 3px -3px 10px goldenrod;
 }
 .errorCount {
   background-color: beige;

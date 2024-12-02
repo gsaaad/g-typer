@@ -25,8 +25,10 @@ const Main = () => {
   const [styleHighScoreComponent, setStyleHighScoreComponent] = useState({
     display: "none",
   });
+  const [rate, setRate] = useState(10.5);
   const [totalWinners, setTotalWinners] = useState([]);
   const [highScoreName, setHighScoreName] = useState("");
+  const [highScore, setHighScore] = useState([highScoreName, errorCount, correctCount, wordsPerMinute]);
   var winners = localStorage.getItem("G-Typers") || [];
 
   // Generate words
@@ -87,6 +89,7 @@ const Main = () => {
     const wordByWord = totalWords.slice(0, valueLength); // Slice of correct letters
     const userLetter = value[valueLength - 1]; // Current letter
 
+
  // Start the timer if it's the first time called
  if (correctCount === 0 && errorCount === 0) {
   startTimeRef.current = Date.now();
@@ -97,7 +100,26 @@ const currentTime = Date.now();
 const elapsedTime = (currentTime - startTimeRef.current) / 1000/ 60 // Minutes
 const wordsPerMinute = Math.floor(correctCount / elapsedTime);
 setWordsPerMinute(wordsPerMinute);
-console.log("Words per minute: ", wordsPerMinute, "which is", correctCount, "correct letters in", elapsedTime, "minutes");
+
+// Adjust the rate based on words per minute
+if (wordsPerMinute > 400 ) {
+  setRate(12);
+} else if (wordsPerMinute > 300  ) {
+  setRate(11);
+} else if (wordsPerMinute > 200 ) {
+  setRate(10);
+} else if (wordsPerMinute > 100 ) {
+  setRate(10);
+} else if (wordsPerMinute > 80 ) {
+  setRate(8);
+} else if (wordsPerMinute > 60 ) {
+  setRate(6);
+} else if (wordsPerMinute > 40 ) {
+  setRate(4);
+} else {
+  setRate(6); // Default rate for lower speeds
+}
+
 
 
 
@@ -113,7 +135,7 @@ console.log("Words per minute: ", wordsPerMinute, "which is", correctCount, "cor
   
       // Update slide and scores
       setSlide({ transform: `translateX(${distance}px)` });
-      setDistance((prev) => prev - 10.5);
+      setDistance((prev) => prev - rate);
       setCorrectCount((prev) => prev + 1);
     } else {
       console.log("Incorrect letter", userLetter);
@@ -146,21 +168,24 @@ console.log("Words per minute: ", wordsPerMinute, "which is", correctCount, "cor
 
 
     // 120 seconds, so 2 minutes of typing
-    countDown(120);  };
+    countDown(4);  };
   const handleHighScoreInput = (e) => {
     e.preventDefault();
+    console.error("HighScore Input", e.target.value);
     setHighScoreName(e.target.value);
   };
   const handleHighScore = (e) => {
     e.preventDefault();
-    var newHighScore = [e.target[0].defaultValue, errorCount, correctCount];
+    var newHighScore = [e.target[0].defaultValue, errorCount, correctCount, wordsPerMinute];
+    setHighScore(newHighScore);
     var winnersArray = winners.length > 0 ? winners.split(",") : [];
-    console.log(winnersArray);
-    winnersArray.push(newHighScore);
+    console.log("Winners Array", winnersArray);
     localStorage.setItem("G-Typers", winnersArray);
-    console.log("Submit Highscore");
+    console.log("Submit Highscore",newHighScore);
+
     setTotalWinners(winnersArray);
   };
+
   return (
     <div className="main-container">
       <div className="secondary-container">
@@ -177,21 +202,32 @@ console.log("Words per minute: ", wordsPerMinute, "which is", correctCount, "cor
           <h1>HighScore</h1>
           <div>
             <div className="row">
-              <p className="col-4 border-bottom border-2 border-primary p-2 font-weight-bold">
+              <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
                 Name
               </p>
-              <p className="col-4 border-bottom border-2 border-primary p-2 font-weight-bold">
+              <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
                 Error Count
               </p>
-              <p className="col-4 border-bottom border-2 border-primary p-2 font-weight-bold">
+              <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
                 Success Count
+              </p>
+              <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
+                Words Per Minute
               </p>
             </div>
             <ul className="score-list row">
               {totalWinners.map((items) => {
                 var itemIndex = totalWinners.indexOf(items);
                 return (
-                  <p className="col-4 font-weight-bold" key={itemIndex}>
+                  <p className="col-3 font-weight-bold" key={itemIndex}>
+                    {items}
+                  </p>
+                );
+              })}
+              {highScore.map((items) => {
+                var itemIndex = highScore.indexOf(items);
+                return (
+                  <p className="col-3 font-weight-bold" key={itemIndex}>
                     {items}
                   </p>
                 );
@@ -236,6 +272,10 @@ console.log("Words per minute: ", wordsPerMinute, "which is", correctCount, "cor
           value={inputValue}
           onChange={handleTyping}
           ref={inputRef}
+          onPaste={(e) => e.preventDefault()} // Prevent pasting
+          autoComplete="off" // Disable auto complete
+          autoCorrect="off" // Disable auto correct
+          spellCheck="false" // Disable spell check
         />
         <div className="rate-error">
           <p className="errorCount" ref={errorRef}></p>

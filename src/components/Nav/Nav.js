@@ -3,7 +3,7 @@ import "./Nav.css";
 const Nav = () => {
   return (
     <nav className="bg-primary text-center ">
-      <h3 className="nav-title">G-Typer 1.0</h3>
+      <h3 className="nav-title">G-Typer</h3>
     </nav>
   );
 };
