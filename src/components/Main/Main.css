@@ -10,10 +10,8 @@
   width: 100%;
   min-height: 88.5vh;
   background-color: #777;
-  border: 2px solid lime;
 }
 .secondary-container {
-  border: 2px solid red;
   margin-top: -3%;
 }
 h2{
@@ -26,7 +24,6 @@ h2{
 }
 
 .challenge-title{
-  border: 2px solid #002fff;
   border-radius: 5%;
   padding: 1%;
   background-color: #002fff;
@@ -63,7 +60,7 @@ h2{
   flex-direction: column;
   background-color: rgb(2, 0, 92);
   box-shadow: 0px 0px 25px rgba(0, 75, 75, 0.747);
-  animation: example 40s linear infinite;
+  animation: example 60s linear infinite;
   box-sizing: border-box;
   border-radius: 5%;
   padding: 1.5%;
@@ -84,7 +81,6 @@ h2{
   font-size: 1.5rem;
   padding: 10px;
   border-radius: 5%;
-  border: 2px solid #191c29;
   background-color: #191c29;
   color: white;
   width: 100%;
@@ -123,6 +119,7 @@ h2{
 .letter {
   font-size: 1.75rem; /* Adjust for desired size */
   color: black; /* Default letter color */
+  font-weight: 500;
 }
 
 .space {
@@ -186,7 +183,6 @@ li {
   margin: 9%;
   border-radius: 5%;
   font-weight: 600;
-  border: 2px solid goldenrod;
   box-shadow: 3px -3px 10px goldenrod;
 }
 .errorCount {
@@ -198,6 +194,15 @@ li {
   color: rgb(187, 33, 6);
 }
 .rate {
+  background-color: beige;
+  font-size: 1.5rem;
+  margin-left: 5%;
+  padding: 7.5px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: teal
+}
+.correctCount {
   background-color: beige;
   font-size: 1.5rem;
   margin-left: 5%;
@@ -222,34 +227,37 @@ li {
 }
 @keyframes example {
   0% {
-    background-color: rgb(9, 56, 158);
+    background-color: #0033cc;
   }
   10% {
-    background-color: rgb(2, 105, 201);
+    background-color: #0044ff;
   }
   20% {
-    background-color: rgb(10, 148, 212);
+    background-color: #0055ff;
+  }
+  30% {
+    background-color: #0066ff;
   }
   40% {
-    background-color: rgb(7, 204, 178);
+    background-color: #0077ff;
   }
   50% {
-    background-color: rgb(0, 255, 213);
+    background-color: #0088ff;
   }
   60% {
-    background-color: rgb(7, 204, 178);
+    background-color: #0099ff;
   }
   70% {
-    background-color: rgb(0, 255, 213);
+    background-color: #00aaff;
   }
   80% {
-    background-color: rgb(7, 204, 178);
+    background-color: #00bbff;
   }
   90% {
-    background-color: rgb(10, 148, 212);
+    background-color: #00ccff;
   }
   100% {
-    background-color: rgb(2, 0, 92);
+    background-color: #00ddff;
   }
 }
 

@@ -6,13 +6,16 @@ import SaveCard from "../SaveCard/SaveCard";
 const Main = () => {
   const [words, setWords] = useState([]);
   var errorRef = useRef(null);
-  var wordsRef = useRef(null);
+  var correctRef = useRef(null);
+  var rateOfWords = useRef(null);
   const inputRef = useRef(null); // Ref to manage input focus
+  const startTimeRef = useRef(null); // Ref to store start time
 
   const [slide, setSlide] = useState({ transform: "translate(100px)" });
   // const [typeSlide, setTypeSlide] = useState({ transform: "translate(100px)" });
   const [errorCount, setErrorCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
+  const [wordsPerMinute, setWordsPerMinute] = useState(0);
   const [distance, setDistance] = useState(100);
   const [inputValue, setInputValue] = useState("");
   const [styleComponent, setStyleComponent] = useState({ display: "none" });
@@ -43,9 +46,9 @@ const Main = () => {
 
   useEffect(() => {
     const errorP = errorRef;
-    const rateWords = wordsRef;
+    const correctLetters = correctRef;
     errorP.current.innerHTML = "Error Count: " + errorCount;
-    rateWords.current.innerHTML = "Correct Letters: " + correctCount;
+    correctLetters.current.innerHTML = "Correct Letters: " + correctCount;
   }, [errorCount, correctCount]);
 
   var totalWords = words.join(" ");
@@ -83,10 +86,21 @@ const Main = () => {
     const valueLength = value.length; // Length of input
     const wordByWord = totalWords.slice(0, valueLength); // Slice of correct letters
     const userLetter = value[valueLength - 1]; // Current letter
-  
-    console.log("Current value: ", value);
-    console.log("Current letter: ", userLetter);
-    console.log("Word by word: ", wordByWord);
+
+ // Start the timer if it's the first time called
+ if (correctCount === 0 && errorCount === 0) {
+  startTimeRef.current = Date.now();
+}
+
+// Calculate words per minute
+const currentTime = Date.now();
+const elapsedTime = (currentTime - startTimeRef.current) / 1000/ 60 // Minutes
+const wordsPerMinute = Math.floor(correctCount / elapsedTime);
+setWordsPerMinute(wordsPerMinute);
+console.log("Words per minute: ", wordsPerMinute, "which is", correctCount, "correct letters in", elapsedTime, "minutes");
+
+
+
   
     setInputValue(value); // Update state for controlled input
   
@@ -115,6 +129,7 @@ const Main = () => {
     challengeTitle.style.display = "none";
     setStyleComponent({ display: "block" });
     setStyleReadyComponent({ display: "none" });
+    startTimeRef.current = new Date().getTime(); // Initialize start time
   
 
     const countDown = (i) => {
@@ -152,7 +167,7 @@ const Main = () => {
         <div className="challenge-title">
           <h2>
             Do you have what it takes to be a{" "}
-            <span className="G-title ">G-Typer?</span>
+            <span className="G-title">G-Typer?</span>
           </h2>
         </div>
         <div className="progress">
@@ -161,14 +176,14 @@ const Main = () => {
         <div className="high-score" style={styleHighScoreComponent}>
           <h1>HighScore</h1>
           <div>
-            <div className="row ">
-              <p className="col-4 border-bottom border-2 border-primary p-2 ">
+            <div className="row">
+              <p className="col-4 border-bottom border-2 border-primary p-2 font-weight-bold">
                 Name
               </p>
-              <p className="col-4 border-bottom border-2 border-primary p-2">
+              <p className="col-4 border-bottom border-2 border-primary p-2 font-weight-bold">
                 Error Count
               </p>
-              <p className="col-4 border-bottom border-2 border-primary p-2">
+              <p className="col-4 border-bottom border-2 border-primary p-2 font-weight-bold">
                 Success Count
               </p>
             </div>
@@ -176,7 +191,7 @@ const Main = () => {
               {totalWinners.map((items) => {
                 var itemIndex = totalWinners.indexOf(items);
                 return (
-                  <p className="col-4" key={itemIndex}>
+                  <p className="col-4 font-weight-bold" key={itemIndex}>
                     {items}
                   </p>
                 );
@@ -186,7 +201,6 @@ const Main = () => {
           <div>
             <div className="rate-error">
               <p className="errorCount m-2" ref={errorRef}></p>
-              <p className="rate m-2" ref={wordsRef}></p>
             </div>
 
             <SaveCard
@@ -203,19 +217,18 @@ const Main = () => {
         </button>
       </div>
       <div className="card-container" style={styleComponent}>
-      <div className="card2">
-  {words.map((word, wordIndex) => (
-    <div className="word" key={wordIndex} style={slide}>
-      {word.split("").map((letter, letterIndex) => (
-        <span key={`${wordIndex}-${letterIndex}`} className="letter">
-          {letter}
-        </span>
-      ))}
-      {/* Add a space only if it's not the last word */}
-      {wordIndex < words.length - 1 && <span className="space"> </span>}
-    </div>
-  ))}
-</div>
+        <div className="card2">
+          {words.map((word, wordIndex) => (
+            <div className="word" key={wordIndex} style={slide}>
+              {word.split("").map((letter, letterIndex) => (
+                <span key={`${wordIndex}-${letterIndex}`} className="letter">
+                  {letter}
+                </span>
+              ))}
+              {wordIndex < words.length - 1 && <span className="space"> </span>}
+            </div>
+          ))}
+        </div>
 
         <input
           className="card input"
@@ -226,9 +239,11 @@ const Main = () => {
         />
         <div className="rate-error">
           <p className="errorCount" ref={errorRef}></p>
-          <p className="rate" ref={wordsRef}></p>
+          <p className="correctCount" ref={correctRef}></p>
+          <p className="rate" ref={rateOfWords}>
+            Correct Letters Per Minute: {wordsPerMinute}
+          </p>
         </div>
-        Keep on typing...
       </div>
       <div className="flex flex-row m-2 flex-wrap" id="buttonsContainer"></div>
     </div>
