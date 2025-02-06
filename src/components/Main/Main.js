@@ -168,7 +168,7 @@ if (wordsPerMinute > 400 ) {
 
 
     // 120 seconds, so 2 minutes of typing
-    countDown(4);  };
+    countDown(120);  };
   const handleHighScoreInput = (e) => {
     e.preventDefault();
     console.error("HighScore Input", e.target.value);
@@ -188,7 +188,6 @@ if (wordsPerMinute > 400 ) {
 
   return (
     <div className="main-container">
-      <div className="secondary-container">
         <div className="challenge-title">
           <h2>
             Do you have what it takes to be a{" "}
@@ -246,7 +245,6 @@ if (wordsPerMinute > 400 ) {
             />
           </div>
         </div>
-      </div>
       <div className="card" style={styleReadyComponent}>
         <button className="ready-btn" onClick={handleShowComponent}>
           Ready

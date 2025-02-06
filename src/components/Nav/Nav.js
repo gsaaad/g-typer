@@ -1,9 +1,13 @@
 import React from "react";
 import "./Nav.css";
+
 const Nav = () => {
   return (
-    <nav className="bg-primary text-center ">
-      <h3 className="nav-title">G-Typer</h3>
+    <nav className="navbar">
+      <div className="nav-container">
+        <h1 className="navbar-title">G-Typer</h1>
+        <p className="navbar-subtitle">Increase Your Typing Speed &amp; Accuracy</p>
+      </div>
     </nav>
   );
 };
