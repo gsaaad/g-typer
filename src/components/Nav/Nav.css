@@ -2,7 +2,6 @@
   background: linear-gradient(90deg, #005667, #0a8baf);
   width: 100%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  margin-bottom: 1rem;
 }
 
 .nav-container {
@@ -13,7 +12,7 @@
 }
 
 .navbar-title {
-  color: #fff;
+  color: #e3e3e3;
   font-size: 2rem;
   margin: 0;
   font-family: "Roboto", sans-serif;
@@ -21,7 +20,7 @@
 }
 
 .navbar-subtitle {
-  color: #dfefff;
+  color: #e3e3e3;
   font-size: 1rem;
   margin: 0.5rem 0 0;
   font-family: "Roboto", sans-serif;

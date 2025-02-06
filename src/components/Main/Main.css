@@ -8,12 +8,12 @@
   text-align: center;
   padding: 3.5% 5.5%;
   width: 100%;
-  min-height: 88.5vh;
-  background-color: #777; 
+  height: 87.5vh;
+  overflow: hidden;
+  background-color: #777;
+  box-sizing: border-box;
 }
-.secondary-container {
-  margin-top: -3%;
-}
+
 h2{
   color:#040115
 
@@ -33,11 +33,11 @@ h2{
 .progress {
   display: inline-block;
   width: 95%;
-  height: 35px;
+  height: 50px;
   border-radius: 20px;
   background: #222020;
   box-shadow: 0px 2px 20px #75bcdd;
-  margin: 4%;
+  margin: 1% auto;
 }
 .bar {
   border-radius: 20px;
@@ -58,12 +58,11 @@ h2{
 .card-container {
   display: flex;
   flex-direction: column;
-  background-color: rgb(2, 0, 92);
   box-shadow: 0px 0px 25px rgba(0, 75, 75, 0.747);
   animation: example 60s linear infinite;
   box-sizing: border-box;
   border-radius: 5%;
-  padding: 1.5%;
+  padding: 1.5%;  
 }
 .wrapper {
   position: relative;
