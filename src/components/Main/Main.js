@@ -12,7 +12,7 @@ const Main = () => {
   const startTimeRef = useRef(null); // Ref to store start time
 
   const [slide, setSlide] = useState({ transform: "translate(100px)" });
-  // const [typeSlide, setTypeSlide] = useState({ transform: "translate(100px)" });
+  const [slideType, setSlideType] = useState({ transform: "translate(50px)" });
   const [errorCount, setErrorCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [wordsPerMinute, setWordsPerMinute] = useState(0);
@@ -96,53 +96,59 @@ const Main = () => {
   };
 
   const handleTyping = (e) => {
-    const value = e.target.value; // User's current input
-    const valueLength = value.length; // Length of input
-    const wordByWord = totalWords.slice(0, valueLength); // Slice of correct letters
-    const userLetter = value[valueLength - 1]; // Current letter
+    const value = e.target.value;
+    const valueLength = value.length;
+    const wordByWord = totalWords.slice(0, valueLength);
+    const userLetter = value[valueLength - 1];
 
-    // Start the timer if it's the first time called
+    // Start the timer on first input
     if (correctCount === 0 && errorCount === 0) {
       startTimeRef.current = Date.now();
     }
 
-    // Calculate words per minute
+    // Calculate words per minute (WPM)
     const currentTime = Date.now();
-    const elapsedTime = (currentTime - startTimeRef.current) / 1000 / 60; // Minutes
-    const wordsPerMinute = Math.floor(correctCount / elapsedTime);
-    setWordsPerMinute(wordsPerMinute);
+    const elapsedTime = (currentTime - startTimeRef.current) / 1000 / 60;
+    const wordsPerMinuteValue = Math.floor(correctCount / elapsedTime);
+    setWordsPerMinute(wordsPerMinuteValue);
 
-    // Adjust the rate based on words per minute
-    if (wordsPerMinute > 400) {
-      setRate(12);
-    } else if (wordsPerMinute > 300) {
-      setRate(11);
-    } else if (wordsPerMinute > 200) {
-      setRate(10);
-    } else if (wordsPerMinute > 100) {
-      setRate(10);
-    } else if (wordsPerMinute > 80) {
-      setRate(8);
-    } else if (wordsPerMinute > 60) {
-      setRate(6);
-    } else if (wordsPerMinute > 40) {
-      setRate(4);
+    // Determine the new rate based on current WPM
+    let newRate;
+    if (wordsPerMinuteValue > 400) {
+      newRate = 12;
+    } else if (wordsPerMinuteValue > 300) {
+      newRate = 11;
+    } else if (wordsPerMinuteValue > 200) {
+      newRate = 10;
+    } else if (wordsPerMinuteValue > 100) {
+      newRate = 10;
+    } else if (wordsPerMinuteValue > 80) {
+      newRate = 8;
+    } else if (wordsPerMinuteValue > 60) {
+      newRate = 6;
+    } else if (wordsPerMinuteValue > 40) {
+      newRate = 4;
     } else {
-      setRate(6); // Default rate for lower speeds
+      newRate = 6;
     }
+    setRate(newRate);
 
-    setInputValue(value); // Update state for controlled input
+    // Update the input value state
+    setInputValue(value);
 
-    // Highlight words dynamically based on input
+    // Update highlighted words
     highlightWords(value, wordByWord);
 
-    // Check for correctness
+    // If the user input matches the expected text
     if (value === wordByWord) {
       console.log("Correct letter", userLetter);
-
-      // Update slide and scores
-      setSlide({ transform: `translateX(${distance}px)` });
-      setDistance((prev) => prev - rate);
+      // Move the words container by newRate
+      const newDistance = distance - newRate;
+      setDistance(newDistance);
+      setSlide({ transform: `translateX(${newDistance}px)` });
+      // Move the input container slower (e.g. half the speed)
+      const slowerTranslation = newDistance / 2;
+      setSlideType({ transform: `translateX(${slowerTranslation + 50}px)` });
       setCorrectCount((prev) => prev + 1);
     } else {
       console.log("Incorrect letter", userLetter);
@@ -279,7 +285,7 @@ const Main = () => {
           <input
             className="input"
             id="input"
-            style={slide}
+            style={slideType}
             value={inputValue}
             onChange={handleTyping}
             ref={inputRef}

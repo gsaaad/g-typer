@@ -76,13 +76,19 @@ h2{
   pointer-events: none;
   opacity: 0.75;
 }
-.input{
+.input {
   font-size: 1.5rem;
   padding: 10px;
-  border-radius: 5%;
   background-color: #191c29;
-  color: white;
+  margin: auto 0;
+  color: #e3e3e3;
   width: 100%;
+  border: none;
+  outline: none;
+  /* Place the input below the card via stacking context */
+  position: relative;
+  /* z-index: -1; */
+  transition: opacity 0.3s;
 }
 
 .input:placeholder-shown + .placeholder {
@@ -138,8 +144,9 @@ h2{
   background: #191c29;
   height: 25vh;
   width: 100%;
+  overflow: hidden;
   font-size: 1.75rem;
-  color: white;
+  color: #e3e3e3;
   padding-left: 40px;
   display: flex;
 }
@@ -154,7 +161,7 @@ h2{
 .new-score{
   display: flex;
   flex-direction: column;
-  color: yellow;
+  color: #FFCB0B;
   border-radius: 5%;
 }
 .score-list {
@@ -232,37 +239,19 @@ li {
 }
 @keyframes example {
   0% {
-    background-color: #0033cc;
+    background-color: #000080;
   }
-  10% {
-    background-color: #0044ff;
-  }
-  20% {
-    background-color: #0055ff;
-  }
-  30% {
-    background-color: #0066ff;
-  }
-  40% {
-    background-color: #0077ff;
+  25% {
+    background-color: #000080;
   }
   50% {
-    background-color: #0088ff;
+    background-color: #000080;
   }
-  60% {
-    background-color: #0099ff;
-  }
-  70% {
-    background-color: #00aaff;
-  }
-  80% {
-    background-color: #00bbff;
-  }
-  90% {
-    background-color: #00ccff;
+  75% {
+    background-color: #000080;
   }
   100% {
-    background-color: #00ddff;
+    background-color: #000080;
   }
 }
 
