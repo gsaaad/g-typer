@@ -150,53 +150,6 @@ h2{
   padding-left: 40px;
   display: flex;
 }
-.high-score {
-  background: #191c29;
-  display: flex;
-  flex-direction: column;
-  color: #e3e3e3;
-  padding: 2%;
-  border-radius: 5%;
-}
-.new-score{
-  display: flex;
-  flex-direction: column;
-  color: #FFCB0B;
-  border-radius: 5%;
-}
-.score-list {
-  display: flex;
-  flex-wrap: wrap;
-}
-li {
-  list-style: none;
-}
-.save-card {
-  display: flex;
-  flex-direction: column;
-  width: 85%;
-  margin: auto;
-}
-
-.saveInput {
-  padding: 3%;
-  font-size: 2rem;
-  width: 85%;
-  border-radius: 5%;
-  color: #191c29;
-}
-.saveInput::placeholder {
-  color: #191c29;
-  font-size: 2rem;
-}
-.saveBtn {
-  background: rgb(7, 204, 178);
-  font-size: 2rem;
-  margin: 5%;
-  padding: 2%;
-  border-radius: 5%;
-  font-weight: 600;
-}
 .errorCount {
   background-color: beige;
   font-size: 1.5rem;
@@ -212,7 +165,7 @@ li {
   padding: 7.5px;
   border-radius: 10px;
   font-weight: 700;
-  color: teal
+  color: black;
 }
 .correctCount {
   background-color: beige;

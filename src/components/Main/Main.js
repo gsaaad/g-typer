@@ -178,7 +178,7 @@ const Main = () => {
     };
 
     // 120 seconds, so 2 minutes of typing
-    countDown(120);
+    countDown(3);
   };
   const handleHighScoreInput = (e) => {
     e.preventDefault();
@@ -198,7 +198,6 @@ const Main = () => {
     console.log("Winners Array", winnersArray);
     localStorage.setItem("G-Typers", winnersArray);
     console.log("Submit Highscore", newHighScore);
-
     setTotalWinners(winnersArray);
   };
 
