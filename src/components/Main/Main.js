@@ -25,15 +25,21 @@ const Main = () => {
     display: "none",
   });
   const [rate, setRate] = useState(10.5);
+  const generateWords = () => {
+    return randomwords(500);
+  };
 
-  // Generate words
-  useEffect(() => {
-    const generatedWords = randomwords(400);
-    // add 12 spaces in the beginning
+  const initWords = () => {
+    const generatedWords = generateWords();
+    // add 12 spaces in the beginning if needed
     generatedWords[0] = generatedWords[0];
-
     setWords(generatedWords);
-  }, []);
+  };
+
+  // // Automatically initialize words on component mount
+  // useEffect(() => {
+  //   initWords();
+  // }, []);
 
   useEffect(() => {
     if (styleComponent.display === "block" && inputRef.current) {
@@ -148,22 +154,38 @@ const Main = () => {
 
   const handleShowComponent = (e) => {
     e.preventDefault();
-    // find className="challenge-title" document and hide it
-    const challengeTitle = document.querySelector(".challenge-title");
-    challengeTitle.style.display = "none";
-    setStyleComponent({ display: "block" });
-    setStyleReadyComponent({ display: "none" });
-    startTimeRef.current = new Date().getTime(); // Initialize start time
 
+    // Hide the ready view and show the challenge view
+    setStyleHighScoreComponent({ display: "none" });
+    setStyleReadyComponent({ display: "none" });
+    setStyleComponent({ display: "block" });
+
+    // reset the words if the user wants to play again
+    initWords();
+
+    // Hide the challenge title
+    const challengeTitle = document.querySelector(".challenge-title");
+    if (challengeTitle) {
+      challengeTitle.style.display = "none";
+    }
+
+    // Initialize start time
+    startTimeRef.current = new Date().getTime();
+
+    // Countdown timer which also updates the progress bar
     const countDown = (i) => {
-      var int = setInterval(function () {
+      const interval = setInterval(() => {
         const bar = document.querySelector(".bar");
+        if (bar) {
+          bar.style.width = `${Math.floor((i / 120) * 100)}%`;
+        }
         if (i === 0) {
+          clearInterval(interval);
+          // After countdown ends, hide the challenge view and show high scores
           setStyleComponent({ display: "none" });
           setStyleHighScoreComponent({ display: "block" });
         }
-        i-- || clearInterval(int);
-        bar.style.width = `${Math.floor((i / 120) * 100)}%`;
+        i--;
       }, 1000);
     };
 
@@ -192,7 +214,10 @@ const Main = () => {
           </button>
         </div>
       )}
-      <HighScoreCard styleHighScoreComponent={styleHighScoreComponent} />
+      <HighScoreCard
+        styleHighScoreComponent={styleHighScoreComponent}
+        handleShowComponent={handleShowComponent}
+      />
 
       <section className="card-container" style={styleComponent}>
         <div className="card2">

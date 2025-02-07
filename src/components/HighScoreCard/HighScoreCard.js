@@ -1,6 +1,6 @@
 import "./HighScoreCard.css";
 
-const HighScoreCard = ({ styleHighScoreComponent }) => {
+const HighScoreCard = ({ styleHighScoreComponent, handleShowComponent }) => {
   // let totalWinners = [
   //   { name: "John", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
   //   {
@@ -22,7 +22,7 @@ const HighScoreCard = ({ styleHighScoreComponent }) => {
   // localStorage.setItem("G-Typers", JSON.stringify(totalWinners));
   const totalWinners = [];
   const storedWinners = localStorage.getItem("G-Typers");
-  console.log("storedWinners", storedWinners);
+  // console.log("storedWinners", storedWinners);
 
   const winnersFromStorage = JSON.parse(storedWinners);
   if (Array.isArray(winnersFromStorage)) {
@@ -31,7 +31,7 @@ const HighScoreCard = ({ styleHighScoreComponent }) => {
     console.error("Expected winners to be an array");
   }
 
-  console.log("totalWinners", totalWinners);
+  // console.log("totalWinners", totalWinners);
   // sort winners by wordsPerMinute in descending order
   const sortedWinners = [...totalWinners].sort(
     (a, b) => b.wordsPerMinute - a.wordsPerMinute
@@ -39,7 +39,7 @@ const HighScoreCard = ({ styleHighScoreComponent }) => {
 
   return (
     <section className="high-score" style={styleHighScoreComponent}>
-      <h1 className="HighScore">Top HighScores</h1>
+      <h1 className="HighScore">Top Highscores</h1>
       <div>
         <div className="row high-score-header">
           <p className="col-2">Rank</p>
@@ -62,6 +62,19 @@ const HighScoreCard = ({ styleHighScoreComponent }) => {
           ))}
         </ul>
       </div>
+      <button
+        onClick={(e) => {
+          e.preventDefault();
+          if (typeof handleShowComponent === "function") {
+            handleShowComponent(e);
+          } else {
+            console.error("handleShowComponent is not defined.");
+          }
+        }}
+        className="redo-button"
+      >
+        Try Again
+      </button>
     </section>
   );
 };
