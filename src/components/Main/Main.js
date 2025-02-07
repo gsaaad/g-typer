@@ -36,11 +36,6 @@ const Main = () => {
     setWords(generatedWords);
   };
 
-  // // Automatically initialize words on component mount
-  // useEffect(() => {
-  //   initWords();
-  // }, []);
-
   useEffect(() => {
     if (styleComponent.display === "block" && inputRef.current) {
       inputRef.current.focus();

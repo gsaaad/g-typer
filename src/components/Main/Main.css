@@ -96,14 +96,27 @@ h2{
 }
 
 .ready-btn {
-  margin-top: 14%;
-  margin-right: 10%;
-  font-weight: 600;
-  color: #c0c0c0;
-  border-radius: 14%; 
-  box-shadow: 0px 2px 40px #3dcdf8;
   background-color: #082C55;
-  font-size: 3/75rem;
+  color: #fff;
+  padding: 10px 20px;
+  font-size: 32px;
+  font-weight: bold;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: 16px;
+}
+
+.ready-btn:hover {
+  background-color: #065096;
+  transform: translateY(-2px);
+}
+
+.ready-btn:active {
+  background-color: #082C55;
+  transform: translateY(0);
 }
 
 .card2 {

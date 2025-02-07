@@ -112,3 +112,27 @@
     border-bottom-color: #FFA500;
 
   }
+
+  .redo-button {
+    background-color: #082C55;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    margin-top: 16px;
+  }
+  
+  .redo-button:hover {
+    background-color: #065096;
+    transform: translateY(-2px);
+  }
+  
+  .redo-button:active {
+    background-color: #082C55;
+    transform: translateY(0);
+  }
