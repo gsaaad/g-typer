@@ -1,8 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Main.css";
 import randomwords from "random-words";
-import SaveCard from "../SaveCard/SaveCard";
-
+import HighScoreCard from "../HighScoreCard/HighScoreCard";
 const Main = () => {
   const [words, setWords] = useState([]);
   var errorRef = useRef(null);
@@ -26,15 +25,6 @@ const Main = () => {
     display: "none",
   });
   const [rate, setRate] = useState(10.5);
-  const [totalWinners, setTotalWinners] = useState([]);
-  const [highScoreName, setHighScoreName] = useState("");
-  const [highScore, setHighScore] = useState([
-    highScoreName,
-    errorCount,
-    correctCount,
-    wordsPerMinute,
-  ]);
-  var winners = localStorage.getItem("G-Typers") || [];
 
   // Generate words
   useEffect(() => {
@@ -177,28 +167,7 @@ const Main = () => {
       }, 1000);
     };
 
-    // 120 seconds, so 2 minutes of typing
     countDown(3);
-  };
-  const handleHighScoreInput = (e) => {
-    e.preventDefault();
-    console.error("HighScore Input", e.target.value);
-    setHighScoreName(e.target.value);
-  };
-  const handleHighScore = (e) => {
-    e.preventDefault();
-    var newHighScore = [
-      e.target[0].defaultValue,
-      errorCount,
-      correctCount,
-      wordsPerMinute,
-    ];
-    setHighScore(newHighScore);
-    var winnersArray = winners.length > 0 ? winners.split(",") : [];
-    console.log("Winners Array", winnersArray);
-    localStorage.setItem("G-Typers", winnersArray);
-    console.log("Submit Highscore", newHighScore);
-    setTotalWinners(winnersArray);
   };
 
   return (
@@ -212,51 +181,9 @@ const Main = () => {
       </header>
 
       {/* Progress Bar */}
-      <div className="progress">
+      <div className="progress" style={{ display: styleComponent.display }}>
         <div className="bar shadow floor"></div>
       </div>
-
-      {/* High Score Section */}
-      <section className="high-score" style={styleHighScoreComponent}>
-        <h1>HighScore</h1>
-        <div>
-          <div className="row score-header">
-            <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
-              Name
-            </p>
-            <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
-              Error Count
-            </p>
-            <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
-              Success Count
-            </p>
-            <p className="col-3 border-bottom border-2 border-primary p-2 font-weight-bold">
-              Words Per Minute
-            </p>
-          </div>
-          <ul className="score-list row">
-            {totalWinners.map((item, index) => (
-              <p className="col-3 font-weight-bold" key={`winner-${index}`}>
-                {item}
-              </p>
-            ))}
-            {highScore.map((score, index) => (
-              <p className="col-3 font-weight-bold" key={`score-${index}`}>
-                {score}
-              </p>
-            ))}
-          </ul>
-        </div>
-        <div className="rate-error">
-          <p className="errorCount m-2" ref={errorRef}></p>
-        </div>
-        <SaveCard
-          highScoreName={highScoreName}
-          handleHighScoreInput={handleHighScoreInput}
-          handleHighScore={handleHighScore}
-        />
-      </section>
-
       {/* Ready Button */}
       {styleReadyComponent.display === "block" && (
         <div className="card">
@@ -265,6 +192,7 @@ const Main = () => {
           </button>
         </div>
       )}
+      <HighScoreCard styleHighScoreComponent={styleHighScoreComponent} />
 
       <section className="card-container" style={styleComponent}>
         <div className="card2">

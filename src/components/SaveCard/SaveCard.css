@@ -1,25 +1,5 @@
 
-.high-score {
-    background: #191c29;
-    display: flex;
-    flex-direction: column;
-    color: #e3e3e3;
-    padding: 2%;
-    border-radius: 5%;
-  }
-  .new-score{
-    display: flex;
-    flex-direction: column;
-    color: #FFCB0B;
-    border-radius: 5%;
-  }
-  .score-list {
-    display: flex;
-    flex-wrap: wrap;
-  }
-  li {
-    list-style: none;
-  }
+
   .save-card {
     display: flex;
     flex-direction: column;
