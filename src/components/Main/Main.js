@@ -24,6 +24,7 @@ const Main = () => {
   const [styleHighScoreComponent, setStyleHighScoreComponent] = useState({
     display: "none",
   });
+  const [userScore, setUserScore] = useState([0, 0, 0]);
   const [rate, setRate] = useState(10.5);
   const generateWords = () => {
     return randomwords(500);
@@ -33,6 +34,7 @@ const Main = () => {
     const generatedWords = generateWords();
     // add 12 spaces in the beginning if needed
     generatedWords[0] = generatedWords[0];
+    setUserScore([0, 0, 0]);
     setWords(generatedWords);
   };
 
@@ -185,6 +187,10 @@ const Main = () => {
     };
 
     countDown(3);
+    // Wrap the scores in a list: [error, success, words]
+    const scoreList = [errorCount, correctCount, wordsPerMinute];
+    setUserScore(scoreList);
+    console.log("User Scores:", scoreList);
   };
 
   return (
@@ -212,6 +218,7 @@ const Main = () => {
       <HighScoreCard
         styleHighScoreComponent={styleHighScoreComponent}
         handleShowComponent={handleShowComponent}
+        currentUserScore={userScore}
       />
 
       <section className="card-container" style={styleComponent}>

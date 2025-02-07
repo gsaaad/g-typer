@@ -1,6 +1,11 @@
 import "./HighScoreCard.css";
+import SaveCard from "../SaveCard/SaveCard";
 
-const HighScoreCard = ({ styleHighScoreComponent, handleShowComponent }) => {
+const HighScoreCard = ({
+  styleHighScoreComponent,
+  handleShowComponent,
+  currentUserScore,
+}) => {
   // let totalWinners = [
   //   { name: "John", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
   //   {
@@ -75,6 +80,55 @@ const HighScoreCard = ({ styleHighScoreComponent, handleShowComponent }) => {
       >
         Try Again
       </button>
+      {/* implementation of SaveCard */}
+      {/*
+        Assume currentUserScore is obtained (e.g., from localStorage or passed as a prop)
+        and that SaveCard has been imported at the top of the file:
+
+        This snippet conditionally renders the SaveCard if the user's rank (based on score matching)
+        is within the top 10. Otherwise, it displays the user's score and offers a download/screenshot option.
+        You might consider using a library like html2canvas for screenshot functionality.
+      */}
+      {currentUserScore ? (
+        sortedWinners.findIndex(
+          (winner) =>
+            winner.name === currentUserScore.name &&
+            winner.errorCount === currentUserScore.errorCount &&
+            winner.successCount === currentUserScore.successCount &&
+            winner.wordsPerMinute === currentUserScore.wordsPerMinute
+        ) +
+          1 <=
+        10 ? (
+          <SaveCard
+            score={currentUserScore}
+            specialMessage="Congratulations! You made it to the top 10! Save your score below."
+            onSave={(name) => {
+              const updatedWinners = [
+                { ...currentUserScore, name },
+                ...sortedWinners,
+              ];
+              localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));
+              console.log("Score saved successfully!");
+            }}
+          />
+        ) : (
+          <div className="non-qualifier">
+            <p>Your Score: {currentUserScore.wordsPerMinute} WPM</p>
+            <p>You didn't make it to the top 10. Keep practicing!</p>
+            <button
+              onClick={() =>
+                console.log(
+                  "Trigger screenshot/download logic here. Consider using html2canvas."
+                )
+              }
+            >
+              Download Screenshot
+            </button>
+          </div>
+        )
+      ) : (
+        <p>No current score available.</p>
+      )}
     </section>
   );
 };
