@@ -1,9 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./SaveCard.css";
 
-const SaveCard = ({ score, onSave, specialMessage }) => {
+const SaveCard = ({ onSave, specialMessage, resetTrigger }) => {
   const [playerName, setPlayerName] = useState("");
   const [isSaved, setIsSaved] = useState(false);
+
+  // Reset form when resetTrigger changes
+  useEffect(() => {
+    if (resetTrigger) {
+      setPlayerName("");
+      setIsSaved(false);
+    }
+  }, [resetTrigger]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,12 +26,12 @@ const SaveCard = ({ score, onSave, specialMessage }) => {
 
     // Show success state
     setIsSaved(true);
+  };
 
-    // Reset form after short delay
-    setTimeout(() => {
-      setPlayerName("");
-      setIsSaved(false);
-    }, 3000);
+  // Public reset method that can be called from parent
+  const reset = () => {
+    setPlayerName("");
+    setIsSaved(false);
   };
 
   return (
@@ -33,6 +41,9 @@ const SaveCard = ({ score, onSave, specialMessage }) => {
       {isSaved ? (
         <div className="save-success">
           <p>Score saved successfully! 🎉</p>
+          <button onClick={reset} className="new-entry-btn">
+            Save as new entry
+          </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
@@ -53,22 +64,21 @@ const SaveCard = ({ score, onSave, specialMessage }) => {
           </button>
         </form>
       )}
-
-      {score && !isSaved && (
-        <div className="score-summary">
-          <p>Your score: {score.wordsPerMinute} WPM</p>
-          <p>
-            Accuracy:{" "}
-            {Math.round(
-              (score.successCount / (score.successCount + score.errorCount)) *
-                100
-            )}
-            %
-          </p>
-        </div>
-      )}
     </div>
   );
+};
+
+// Add a ref method that allows parent to reset the form
+SaveCard.getDerivedStateFromProps = (nextProps, prevState) => {
+  // If shouldReset changed to true, reset the form
+  if (nextProps.shouldReset && !prevState.wasReset) {
+    return {
+      playerName: "",
+      isSaved: false,
+      wasReset: true,
+    };
+  }
+  return null;
 };
 
 export default SaveCard;

@@ -175,6 +175,8 @@ const Main = () => {
     setSlide({ transform: "translate(100px)" });
     setSlideType({ transform: "translate(50px)" });
 
+  
+
     // unhighlight all letters
     const wordsElement = document.querySelector(".card2");
     if (wordsElement) {
