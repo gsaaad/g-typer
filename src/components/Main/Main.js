@@ -73,26 +73,30 @@ const Main = () => {
       if (index < value.length) {
         // If the current letter is correct, highlight in green
         if (value[index] === wordByWord[index]) {
-          if (
-            span.style.color !== "red" &&
-            (index === 0 ||
-              (letterSpans[index - 1].style.color !== "red" &&
-                (letterSpans[index - 1].textContent !== " " ||
-                  (index > 1 && letterSpans[index - 2].style.color !== "red"))))
-          ) {
-            // Only turn green if not already red and previous letter is not red or a space, and if previous letter is space, check the letter before that
-            span.style.color = "green";
+          // Don't change already red letters
+          if (span.style.color !== "red") {
+            // Check if previous letters allow this one to be green
+            const prevIsNotRed =
+              index === 0 || letterSpans[index - 1].style.color !== "red";
+            const prevSpaceIsOk =
+              letterSpans[index - 1]?.textContent !== " " ||
+              (index > 1 && letterSpans[index - 2].style.color !== "red");
+
+            if (prevIsNotRed && prevSpaceIsOk) {
+              span.style.color = "green";
+            }
           }
         } else {
-          // Incorrect letters should remain red
+          // Incorrect letters should be red
           span.style.color = "red";
         }
       } else {
-        // Reset color for letters not yet typed, but keep red if previous letter is red
+        // Letters not yet typed
         if (index > 0 && letterSpans[index - 1].style.color === "red") {
           span.style.color = "red";
         } else {
-          span.style.color = "black";
+          // Fixed CSS value: removed extra semicolon
+          span.style.color = "#a5a2a2";
         }
       }
     });
@@ -170,6 +174,15 @@ const Main = () => {
     setDistance(100);
     setSlide({ transform: "translate(100px)" });
     setSlideType({ transform: "translate(50px)" });
+
+    // unhighlight all letters
+    const wordsElement = document.querySelector(".card2");
+    if (wordsElement) {
+      const letterSpans = wordsElement.querySelectorAll("span");
+      letterSpans.forEach((span) => {
+        span.style.color = "#a5a2a2";
+      });
+    }
 
     // Hide the ready view and show the challenge view
     setStyleHighScoreComponent({ display: "none" });
