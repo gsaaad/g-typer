@@ -312,108 +312,89 @@ const handleScreenshot = () => {
         </ul>
       </div>
 
-      {currentUserScore ? (
-        <div className="user-results">
-          <h3>Your Score:</h3>
-          {isTopTen ? (
-            <div className="top-qualifier">
-              <p className="special-message">
-                Congratulations! You made it to the top 10!
-              </p>
-            </div>
-          ) : (
-            <div className="top-qualifier">
-              <p className="special-message">
-                You're not in the top 10, but keep practicing!
-              </p>
-            </div>
-          )}
-          <div className="user-score-display">
-            <p>
-              Error Count:{" "}
-              {Array.isArray(currentUserScore)
-                ? currentUserScore[0]
-                : currentUserScore.errorCount}{" "}
-              || Success Count:{" "}
-              {Array.isArray(currentUserScore)
-                ? currentUserScore[1]
-                : currentUserScore.successCount}{" "}
-              || Words Per Minute:{" "}
-              {Array.isArray(currentUserScore)
-                ? currentUserScore[2]
-                : currentUserScore.wordsPerMinute}{" "}
-              || Rank: #{userRank}
-              ||
-              <p>
-                Accuracy:{" "}
-                {Math.round(
-                  (Array.isArray(currentUserScore)
-                    ? currentUserScore[1]
-                    : currentUserScore.successCount) /
-                  ((Array.isArray(currentUserScore)
-                    ? currentUserScore[1]
-                    : currentUserScore.successCount) +
-                   (Array.isArray(currentUserScore)
-                    ? currentUserScore[0]
-                    : currentUserScore.errorCount)) *
-                  100
-                )}
-                %
-              </p>
+      <div className="user-results">
+        <span>Your Score:</span>
+        {isTopTen && (
+          <div className="top-qualifier">
+            <p className="special-message">
+              Congratulations! You made it to the top 10!
             </p>
           </div>
-
-          {/* SaveCard for ALL users, with customized message based on rank */}
-          <SaveCard
-
-            specialMessage={
-              isTopTen ? "Enter your name below." : "Enter your name below."
-            }
-            onSave={(name) => {
-              const userScoreWithName = Array.isArray(currentUserScore)
-                ? {
-                    name,
-                    errorCount: currentUserScore[0],
-                    successCount: currentUserScore[1],
-                    wordsPerMinute: currentUserScore[2],
-                  }
-                : { ...currentUserScore, name };
-
-              // Get the current winners from localStorage
-              let totalWinners = [];
-              try {
-                const storedWinners = localStorage.getItem("G-Typers");
-                if (storedWinners) {
-                  totalWinners = JSON.parse(storedWinners);
-                }
-              } catch (error) {
-                console.error("Error retrieving winners:", error);
-              }
-
-              // Add new score to the list
-              const updatedWinners = [...totalWinners, userScoreWithName]
-                .sort((a, b) => b.wordsPerMinute - a.wordsPerMinute)
-                .slice(0, 20); // Keep only top 20 scores
-
-              // Save to localStorage
-              localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));
-              console.log("Score saved successfully!");
-
-              // Reload winners to update the display
-              loadWinners();
-            }}
-          />
-          <button onClick={handleScreenshot} className="download-button">
-            Download Screenshot
-          </button>
-
-          <button onClick={handleShowComponent} className="redo-button">
-            Try Again
-          </button>
+        )}
+        <div className="user-score-display">
+          <p>
+            Error Count:{" "}
+            {Array.isArray(currentUserScore)
+              ? currentUserScore[0]
+              : currentUserScore.errorCount}{" "}
+            || Success Count:{" "}
+            {Array.isArray(currentUserScore)
+              ? currentUserScore[1]
+              : currentUserScore.successCount}{" "}
+            || Words Per Minute:{" "}
+            {Array.isArray(currentUserScore)
+              ? currentUserScore[2]
+              : currentUserScore.wordsPerMinute}{" "}
+            || Rank: #{userRank} || Accuracy:{" "}
+            {Math.round(
+              ((Array.isArray(currentUserScore)
+                ? currentUserScore[1]
+                : currentUserScore.successCount) /
+                ((Array.isArray(currentUserScore)
+                  ? currentUserScore[1]
+                  : currentUserScore.successCount) +
+                  (Array.isArray(currentUserScore)
+                    ? currentUserScore[0]
+                    : currentUserScore.errorCount))) *
+                100
+            )} %
+          </p>
         </div>
-      ) : (
-        <p>No current score available.</p>
-      )}
+
+        <SaveCard
+          specialMessage="Enter your name below."
+          onSave={(name) => {
+            const userScoreWithName = Array.isArray(currentUserScore)
+              ? {
+                  name,
+                  errorCount: currentUserScore[0],
+                  successCount: currentUserScore[1],
+                  wordsPerMinute: currentUserScore[2],
+                }
+              : { ...currentUserScore, name };
+
+            // Get the current winners from localStorage
+            let totalWinners = [];
+            try {
+              const storedWinners = localStorage.getItem("G-Typers");
+              if (storedWinners) {
+                totalWinners = JSON.parse(storedWinners);
+              }
+            } catch (error) {
+              console.error("Error retrieving winners:", error);
+            }
+
+            // Add new score to the list
+            const updatedWinners = [...totalWinners, userScoreWithName]
+              .sort((a, b) => b.wordsPerMinute - a.wordsPerMinute)
+              .slice(0, 20); // Keep only top 20 scores
+
+            // Save to localStorage
+            localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));
+            console.log("Score saved successfully!");
+
+            // Reload winners to update the display
+            loadWinners();
+          }}
+        />
+        <button onClick={handleScreenshot} className="download-button">
+          Download Screenshot
+        </button>
+
+        <button onClick={handleShowComponent} className="redo-button">
+          Try Again
+        </button>
+      </div>
     </section>
   );
 };

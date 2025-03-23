@@ -1,17 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import "./SaveCard.css";
 
-const SaveCard = ({ onSave, specialMessage, resetTrigger }) => {
+const SaveCard = ({ onSave, specialMessage }) => {
   const [playerName, setPlayerName] = useState("");
   const [isSaved, setIsSaved] = useState(false);
-
-  // Reset form when resetTrigger changes
-  useEffect(() => {
-    if (resetTrigger) {
-      setPlayerName("");
-      setIsSaved(false);
-    }
-  }, [resetTrigger]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -26,12 +18,9 @@ const SaveCard = ({ onSave, specialMessage, resetTrigger }) => {
 
     // Show success state
     setIsSaved(true);
-  };
-
-  // Public reset method that can be called from parent
-  const reset = () => {
+    // update playerName to empty string
     setPlayerName("");
-    setIsSaved(false);
+
   };
 
   return (
@@ -41,9 +30,6 @@ const SaveCard = ({ onSave, specialMessage, resetTrigger }) => {
       {isSaved ? (
         <div className="save-success">
           <p>Score saved successfully! 🎉</p>
-          <button onClick={reset} className="new-entry-btn">
-            Save as new entry
-          </button>
         </div>
       ) : (
         <form onSubmit={handleSubmit}>
@@ -66,19 +52,6 @@ const SaveCard = ({ onSave, specialMessage, resetTrigger }) => {
       )}
     </div>
   );
-};
-
-// Add a ref method that allows parent to reset the form
-SaveCard.getDerivedStateFromProps = (nextProps, prevState) => {
-  // If shouldReset changed to true, reset the form
-  if (nextProps.shouldReset && !prevState.wasReset) {
-    return {
-      playerName: "",
-      isSaved: false,
-      wasReset: true,
-    };
-  }
-  return null;
 };
 
 export default SaveCard;

@@ -102,66 +102,82 @@ const Main = () => {
     });
   };
 
-  const handleTyping = (e) => {
-    const value = e.target.value;
-    const valueLength = value.length;
-    const wordByWord = totalWords.slice(0, valueLength);
-    const userLetter = value[valueLength - 1];
+const handleTyping = (e) => {
+  const value = e.target.value;
+  const valueLength = value.length;
+  const wordByWord = totalWords.slice(0, valueLength);
 
-    // Start the timer on first input
-    if (correctCount === 0 && errorCount === 0) {
-      startTimeRef.current = Date.now();
-    }
+  // Track if this is a new character or a deletion
+  const isNewCharacter = value.length > inputValue.length;
+  const userLetter = isNewCharacter ? value[valueLength - 1] : null;
 
-    // Calculate words per minute (WPM)
-    const currentTime = Date.now();
-    const elapsedTime = (currentTime - startTimeRef.current) / 1000 / 60;
-    const wordsPerMinuteValue = Math.floor(correctCount / elapsedTime);
-    setWordsPerMinute(wordsPerMinuteValue);
+  // Start the timer on first input
+  if (correctCount === 0 && errorCount === 0) {
+    startTimeRef.current = Date.now();
+  }
 
-    // Determine the new rate based on current WPM
-    let newRate;
-    if (wordsPerMinuteValue > 400) {
-      newRate = 12;
-    } else if (wordsPerMinuteValue > 300) {
-      newRate = 11;
-    } else if (wordsPerMinuteValue > 200) {
-      newRate = 10;
-    } else if (wordsPerMinuteValue > 100) {
-      newRate = 10;
-    } else if (wordsPerMinuteValue > 80) {
-      newRate = 8;
-    } else if (wordsPerMinuteValue > 60) {
-      newRate = 6;
-    } else if (wordsPerMinuteValue > 40) {
-      newRate = 4;
-    } else {
-      newRate = 6;
-    }
-    setRate(newRate);
+  // Calculate words per minute (WPM)
+  const currentTime = Date.now();
+  const elapsedTime = (currentTime - startTimeRef.current) / 1000 / 60;
+  const wordsPerMinuteValue = Math.floor(correctCount / elapsedTime);
+  setWordsPerMinute(wordsPerMinuteValue);
 
-    // Update the input value state
-    setInputValue(value);
+  // Determine the new rate based on current WPM
+  let newRate;
+  if (wordsPerMinuteValue > 400) {
+    newRate = 12;
+  } else if (wordsPerMinuteValue > 300) {
+    newRate = 11;
+  } else if (wordsPerMinuteValue > 200) {
+    newRate = 10;
+  } else if (wordsPerMinuteValue > 100) {
+    newRate = 10;
+  } else if (wordsPerMinuteValue > 80) {
+    newRate = 8;
+  } else if (wordsPerMinuteValue > 60) {
+    newRate = 6;
+  } else if (wordsPerMinuteValue > 40) {
+    newRate = 4;
+  } else {
+    newRate = 6;
+  }
+  setRate(newRate);
 
-    // Update highlighted words
-    highlightWords(value, wordByWord);
+  // Update highlighted words
+  highlightWords(value, wordByWord);
 
-    // If the user input matches the expected text
+  // Only count new characters, not deletions or corrections
+  if (isNewCharacter) {
+    // If the input value and expected text match
     if (value === wordByWord) {
       console.log("Correct letter", userLetter);
-      // Move the words container by newRate
-      const newDistance = distance - newRate;
-      setDistance(newDistance);
-      setSlide({ transform: `translateX(${newDistance}px)` });
-      // Move the input container slower (e.g. half the speed)
-      const slowerTranslation = newDistance / 2;
-      setSlideType({ transform: `translateX(${slowerTranslation + 50}px)` });
-      setCorrectCount((prev) => prev + 1);
+
+      // Check if the last character typed is correct
+      const lastCharacterIsCorrect =
+        value[value.length - 1] === wordByWord[wordByWord.length - 1];
+
+      if (lastCharacterIsCorrect) {
+        // Only count as correct if this specific letter is correct
+        setCorrectCount((prev) => prev + 1);
+
+        // Only move text if the letter is correct
+        const newDistance = distance - newRate;
+        setDistance(newDistance);
+        setSlide({ transform: `translateX(${newDistance}px)` });
+
+        // Move the input container slower
+        const slowerTranslation = newDistance / 2;
+        setSlideType({ transform: `translateX(${slowerTranslation + 50}px)` });
+      }
     } else {
       console.log("Incorrect letter", userLetter);
       setErrorCount((prev) => prev + 1);
     }
-  };
+  }
+
+  // Update the input value state (must be after our comparison)
+  setInputValue(value);
+};
 
   const handleShowComponent = (e) => {
     e.preventDefault();
@@ -175,7 +191,7 @@ const Main = () => {
     setSlide({ transform: "translate(100px)" });
     setSlideType({ transform: "translate(50px)" });
 
-  
+
 
     // unhighlight all letters
     const wordsElement = document.querySelector(".card2");
