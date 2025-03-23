@@ -289,11 +289,12 @@ const HighScoreCard = ({
                     }
                   : { ...currentUserScore, name };
 
-                // Add new score and re-sort
+                // Add new score
                 const updatedWinners = [...totalWinners, userScoreWithName]
                   .sort((a, b) => b.wordsPerMinute - a.wordsPerMinute)
                   .slice(0, 20); // Keep only top 20 scores
 
+                // Save to localStorage
                 localStorage.setItem(
                   "G-Typers",
                   JSON.stringify(updatedWinners)
