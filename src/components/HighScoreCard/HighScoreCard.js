@@ -33,11 +33,18 @@ const HighScoreCard = ({
     // Apply error penalty - higher errors result in exponentially higher penalties
     const errorPenalty = Math.pow(1.1, Math.min(errorCount, 50)) - 1;
 
+    // Define weights for speed and success count (favoring success count more)
+    const wpmWeight = 0.5;
+    const successWeight = 1.5;
+
+    // Combine weighted performance factors
+    const weightedPerformance = wpm * wpmWeight + successCount * successWeight;
+
     // Calculate weighted score:
-    // Base: WPM
-    // Multiply by accuracy squared (to heavily favor accuracy)
-    // Subtract error penalty
-    const weightedScore = wpm * Math.pow(accuracyRate, 2) * 100 - errorPenalty;
+    // Multiply the combined performance by accuracy squared (to heavily favor accuracy),
+    // then scale and subtract the error penalty
+    const weightedScore = weightedPerformance * Math.pow(accuracyRate, 2) * 100 - errorPenalty;
+    console.log("weightedScore", weightedScore);
 
     // Return a non-negative score
     return Math.max(0, Math.round(weightedScore));
