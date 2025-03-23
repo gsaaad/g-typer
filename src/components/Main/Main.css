@@ -6,28 +6,26 @@
 
 .main-container {
   text-align: center;
-  padding: 3.5% 5.5%;
+  padding: 7% 5.5%;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
+  height: 100vh; /* Full screen height */
+  overflow: hidden; /* No scrolling */
   background-color: #616161;
   box-sizing: border-box;
 }
 
-h2{
-  color:#040115
-
+h2 {
+  color: #040115;
 }
 .G-title {
   font-weight: 700;
   color: #074994;
 }
 
-.challenge-title{
-  border-radius: 5%;
+.challenge-title {
+  border-radius: 12%;
   padding: 1%;
-  background-color: #FFCB0B;
-
+  background-color: #ffcb0b;
 }
 
 .progress {
@@ -61,8 +59,8 @@ h2{
   box-shadow: 0px 0px 25px rgba(0, 75, 75, 0.747);
   animation: example 60s linear infinite;
   box-sizing: border-box;
-  border-radius: 5%;
-  padding: 1.5%;  
+  border-radius: 8px;
+  padding: 1.5%;
 }
 .wrapper {
   position: relative;
@@ -96,7 +94,7 @@ h2{
 }
 
 .ready-btn {
-  background-color: #082C55;
+  background-color: #082c55;
   color: #fff;
   padding: 10px 20px;
   font-size: 32px;
@@ -106,7 +104,8 @@ h2{
   cursor: pointer;
   transition: background-color 0.3s ease, transform 0.2s ease;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  margin-top: 16px;
+  margin: 16px auto;
+  display: block;
 }
 
 .ready-btn:hover {
@@ -115,7 +114,7 @@ h2{
 }
 
 .ready-btn:active {
-  background-color: #082C55;
+  background-color: #082c55;
   transform: translateY(0);
 }
 
@@ -144,7 +143,6 @@ h2{
   width: 10px; /* Space width */
   display: inline-block; /* Ensures proper spacing behavior */
 }
-
 
 .totalWords::first-letter {
   font-size: 3.3rem;
@@ -205,19 +203,19 @@ h2{
 }
 @keyframes example {
   0% {
-    background-image: linear-gradient(45deg, #001F3F, #000080);
+    background-image: linear-gradient(45deg, #001f3f, #000080);
   }
   25% {
-    background-image: linear-gradient(45deg, #000080, #001F3F);
+    background-image: linear-gradient(45deg, #000080, #001f3f);
   }
   50% {
-    background-image: linear-gradient(45deg, #001F3F, #000033);
+    background-image: linear-gradient(45deg, #001f3f, #000033);
   }
   75% {
-    background-image: linear-gradient(45deg, #000033, #001F3F);
+    background-image: linear-gradient(45deg, #000033, #001f3f);
   }
   100% {
-    background-image: linear-gradient(45deg, #001F3F, #000080);
+    background-image: linear-gradient(45deg, #001f3f, #000080);
   }
 }
 

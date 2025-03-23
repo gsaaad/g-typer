@@ -1,33 +1,13 @@
-import "./HighScoreCard.css";
 import SaveCard from "../SaveCard/SaveCard";
+import "./HighScoreCard.css";
 
 const HighScoreCard = ({
   styleHighScoreComponent,
   handleShowComponent,
   currentUserScore,
 }) => {
-  // let totalWinners = [
-  //   { name: "John", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   {
-  //     name: "Jane",
-  //     errorCount: 56,
-  //     successCount: 66,
-  //     wordsPerMinute: 100,
-  //   },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  //   { name: "Doe", errorCount: 56, successCount: 66, wordsPerMinute: 100 },
-  // ];
-  // set totalWinners to the value stored in localStorage
-  // localStorage.setItem("G-Typers", JSON.stringify(totalWinners));
   const totalWinners = [];
   const storedWinners = localStorage.getItem("G-Typers");
-  // console.log("storedWinners", storedWinners);
 
   const winnersFromStorage = JSON.parse(storedWinners);
   if (Array.isArray(winnersFromStorage)) {
@@ -35,6 +15,19 @@ const HighScoreCard = ({
   } else {
     console.error("Expected winners to be an array");
   }
+  // check if currentUserScore is a valid object and competes with the top 10
+  const isUserTopTen =
+    currentUserScore &&
+    totalWinners.some(
+      (winner) =>
+        winner.name === currentUserScore.name &&
+        winner.errorCount === currentUserScore.errorCount &&
+        winner.successCount === currentUserScore.successCount &&
+        winner.wordsPerMinute === currentUserScore.wordsPerMinute
+    );
+
+    // console.log("isUserTopTen", isUserTopTen);
+
 
   // console.log("totalWinners", totalWinners);
   // sort winners by wordsPerMinute in descending order
@@ -44,7 +37,7 @@ const HighScoreCard = ({
 
   return (
     <section className="high-score" style={styleHighScoreComponent}>
-      <h1 className="HighScore">Top Highscores</h1>
+      <span className="HighScore">Top Highscores</span>
       <div>
         <div className="row high-score-header">
           <p className="col-2">Rank</p>
@@ -67,28 +60,7 @@ const HighScoreCard = ({
           ))}
         </ul>
       </div>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          if (typeof handleShowComponent === "function") {
-            handleShowComponent(e);
-          } else {
-            console.error("handleShowComponent is not defined.");
-          }
-        }}
-        className="redo-button"
-      >
-        Try Again
-      </button>
-      {/* implementation of SaveCard */}
-      {/*
-        Assume currentUserScore is obtained (e.g., from localStorage or passed as a prop)
-        and that SaveCard has been imported at the top of the file:
 
-        This snippet conditionally renders the SaveCard if the user's rank (based on score matching)
-        is within the top 10. Otherwise, it displays the user's score and offers a download/screenshot option.
-        You might consider using a library like html2canvas for screenshot functionality.
-      */}
       {currentUserScore ? (
         sortedWinners.findIndex(
           (winner) =>
@@ -99,18 +71,36 @@ const HighScoreCard = ({
         ) +
           1 <=
         10 ? (
-          <SaveCard
-            score={currentUserScore}
-            specialMessage="Congratulations! You made it to the top 10! Save your score below."
-            onSave={(name) => {
-              const updatedWinners = [
-                { ...currentUserScore, name },
-                ...sortedWinners,
-              ];
-              localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));
-              console.log("Score saved successfully!");
-            }}
-          />
+          <>
+            <SaveCard
+              score={currentUserScore}
+              specialMessage="Congratulations! You made it to the top 10! Save your score below."
+              onSave={(name) => {
+                const updatedWinners = [
+                  { ...currentUserScore, name },
+                  ...sortedWinners,
+                ];
+                localStorage.setItem(
+                  "G-Typers",
+                  JSON.stringify(updatedWinners)
+                );
+                console.log("Score saved successfully!");
+              }}
+            />
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                if (typeof handleShowComponent === "function") {
+                  handleShowComponent(e);
+                } else {
+                  console.error("handleShowComponent is not defined.");
+                }
+              }}
+              className="redo-button"
+            >
+              Try Again
+            </button>
+          </>
         ) : (
           <div className="non-qualifier">
             <p>Your Score: {currentUserScore.wordsPerMinute} WPM</p>
@@ -123,6 +113,19 @@ const HighScoreCard = ({
               }
             >
               Download Screenshot
+            </button>
+            <button
+              onClick={(e) => {
+                e.preventDefault();
+                if (typeof handleShowComponent === "function") {
+                  handleShowComponent(e);
+                } else {
+                  console.error("handleShowComponent is not defined.");
+                }
+              }}
+              className="redo-button"
+            >
+              Try Again
             </button>
           </div>
         )

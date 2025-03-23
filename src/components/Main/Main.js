@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useRef } from "react";
-import "./Main.css";
 import randomwords from "random-words";
+import React, { useEffect, useRef, useState } from "react";
 import HighScoreCard from "../HighScoreCard/HighScoreCard";
+import "./Main.css";
 const Main = () => {
   const [words, setWords] = useState([]);
   var errorRef = useRef(null);
@@ -29,7 +29,17 @@ const Main = () => {
   const generateWords = () => {
     return randomwords(500);
   };
+  // Add these refs at the component level
+  const errorCountRef = useRef(0);
+  const correctCountRef = useRef(0);
+  // Then add this effect to keep them updated
+  useEffect(() => {
+    errorCountRef.current = errorCount;
+  }, [errorCount]);
 
+  useEffect(() => {
+    correctCountRef.current = correctCount;
+  }, [correctCount]);
   const initWords = () => {
     const generatedWords = generateWords();
     // add 12 spaces in the beginning if needed
@@ -152,12 +162,21 @@ const Main = () => {
   const handleShowComponent = (e) => {
     e.preventDefault();
 
+    // Reset counters when starting a new game
+    setErrorCount(0);
+    setCorrectCount(0);
+    setWordsPerMinute(0);
+    setInputValue("");
+    setDistance(100);
+    setSlide({ transform: "translate(100px)" });
+    setSlideType({ transform: "translate(50px)" });
+
     // Hide the ready view and show the challenge view
     setStyleHighScoreComponent({ display: "none" });
     setStyleReadyComponent({ display: "none" });
     setStyleComponent({ display: "block" });
 
-    // reset the words if the user wants to play again
+    // Reset words for a new game
     initWords();
 
     // Hide the challenge title
@@ -166,33 +185,45 @@ const Main = () => {
       challengeTitle.style.display = "none";
     }
 
-    // Initialize start time
-    startTimeRef.current = new Date().getTime();
+    // Initialize start time for typing challenge
+    startTimeRef.current = Date.now();
 
-    // Countdown timer which also updates the progress bar
-    const countDown = (i) => {
-      const interval = setInterval(() => {
-        const bar = document.querySelector(".bar");
-        if (bar) {
-          bar.style.width = `${Math.floor((i / 120) * 100)}%`;
-        }
-        if (i === 0) {
-          clearInterval(interval);
-          // After countdown ends, hide the challenge view and show high scores
-          setStyleComponent({ display: "none" });
-          setStyleHighScoreComponent({ display: "block" });
-        }
-        i--;
-      }, 1000);
-    };
+    // Set the total challenge duration (in seconds)
+    const challengeDuration = 3;
+    let remaining = challengeDuration;
 
-    countDown(3);
-    // Wrap the scores in a list: [error, success, words]
-    const scoreList = [errorCount, correctCount, wordsPerMinute];
-    setUserScore(scoreList);
-    console.log("User Scores:", scoreList);
+    // Countdown timer that updates the progress bar and stops the challenge when time is up
+    const interval = setInterval(() => {
+      const bar = document.querySelector(".bar");
+      if (bar) {
+        bar.style.width = `${Math.floor(
+          (remaining / challengeDuration) * 100
+        )}%`;
+      }
+
+      if (remaining <= 0) {
+        clearInterval(interval);
+
+        // Get the latest state values using refs
+        const finalErrorCount = errorCountRef.current;
+        const finalCorrectCount = correctCountRef.current;
+
+        // Calculate final WPM based on current values
+        const elapsedTimeMinutes = challengeDuration / 60;
+        const finalWPM = Math.floor(finalCorrectCount / elapsedTimeMinutes);
+
+        // Time is up: hide the challenge view and show high scores
+        setStyleComponent({ display: "none" });
+        setStyleHighScoreComponent({ display: "block" });
+
+        // Use our captured latest values for the score
+        const scoreList = [finalErrorCount, finalCorrectCount, finalWPM];
+        console.log("Time's up. User Scores:", scoreList);
+        setUserScore(scoreList);
+      }
+      remaining--;
+    }, 1000);
   };
-
   return (
     <div className="main-container">
       {/* Title Section */}

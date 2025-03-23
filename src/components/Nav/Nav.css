@@ -1,12 +1,16 @@
 .navbar {
-  background: linear-gradient(90deg, #003E78, #082C55);
+  background: linear-gradient(90deg, #003e78, #082c55);
   width: 100%;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  /* top of the page */
+  position: fixed;
+  z-index: 100;
+  /* top left right */
+  top: 0;
 }
 
 .nav-container {
   width: 90%;
-  max-width: 1200px;
   margin: 0 auto;
   text-align: center;
 }
@@ -14,9 +18,12 @@
 .navbar-title {
   color: #e3e3e3;
   font-size: 2rem;
-  margin: 0;
   font-family: "Roboto", sans-serif;
   font-weight: 700;
+  /* a-link decoration none */
+  text-decoration: none;
+  /* on hover none */
+  transition: color 0.3s;
 }
 
 .navbar-subtitle {

@@ -3,26 +3,30 @@
   .save-card {
     display: flex;
     flex-direction: column;
-    width: 85%;
-    margin: auto;
+    margin: 0.33% auto;
+    width: 25%;
+    border: 1px solid #e3e3e3
   }
-  
+
   .saveInput {
-    padding: 3%;
-    font-size: 2rem;
-    width: 85%;
+    padding: 1%;
+    width: 50%;
     border-radius: 5%;
+    border:none;
     color: #191c29;
   }
   .saveInput::placeholder {
     color: #191c29;
-    font-size: 2rem;
   }
   .saveBtn {
     background: rgb(7, 204, 178);
-    font-size: 2rem;
     margin: 5%;
     padding: 2%;
     border-radius: 5%;
+    border: none;
     font-weight: 600;
+    color: white;
+  }
+  .saveBtn:hover {
+    background: rgb(20, 228, 217);
   }
