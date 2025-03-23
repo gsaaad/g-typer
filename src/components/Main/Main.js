@@ -102,82 +102,87 @@ const Main = () => {
     });
   };
 
-const handleTyping = (e) => {
-  const value = e.target.value;
-  const valueLength = value.length;
-  const wordByWord = totalWords.slice(0, valueLength);
+  const handleTyping = (e) => {
+    const value = e.target.value;
+    const valueLength = value.length;
+    const wordByWord = totalWords.slice(0, valueLength);
 
-  // Track if this is a new character or a deletion
-  const isNewCharacter = value.length > inputValue.length;
-  const userLetter = isNewCharacter ? value[valueLength - 1] : null;
+    // Track if this is a new character or a deletion
+    const isNewCharacter = value.length > inputValue.length;
+    const userLetter = isNewCharacter ? value[valueLength - 1] : null;
 
-  // Start the timer on first input
-  if (correctCount === 0 && errorCount === 0) {
-    startTimeRef.current = Date.now();
-  }
-
-  // Calculate words per minute (WPM)
-  const currentTime = Date.now();
-  const elapsedTime = (currentTime - startTimeRef.current) / 1000 / 60;
-  const wordsPerMinuteValue = Math.floor(correctCount / elapsedTime);
-  setWordsPerMinute(wordsPerMinuteValue);
-
-  // Determine the new rate based on current WPM
-  let newRate;
-  if (wordsPerMinuteValue > 400) {
-    newRate = 12;
-  } else if (wordsPerMinuteValue > 300) {
-    newRate = 11;
-  } else if (wordsPerMinuteValue > 200) {
-    newRate = 10;
-  } else if (wordsPerMinuteValue > 100) {
-    newRate = 10;
-  } else if (wordsPerMinuteValue > 80) {
-    newRate = 8;
-  } else if (wordsPerMinuteValue > 60) {
-    newRate = 6;
-  } else if (wordsPerMinuteValue > 40) {
-    newRate = 4;
-  } else {
-    newRate = 6;
-  }
-  setRate(newRate);
-
-  // Update highlighted words
-  highlightWords(value, wordByWord);
-
-  // Only count new characters, not deletions or corrections
-  if (isNewCharacter) {
-    // If the input value and expected text match
-    if (value === wordByWord) {
-      console.log("Correct letter", userLetter);
-
-      // Check if the last character typed is correct
-      const lastCharacterIsCorrect =
-        value[value.length - 1] === wordByWord[wordByWord.length - 1];
-
-      if (lastCharacterIsCorrect) {
-        // Only count as correct if this specific letter is correct
-        setCorrectCount((prev) => prev + 1);
-
-        // Only move text if the letter is correct
-        const newDistance = distance - newRate;
-        setDistance(newDistance);
-        setSlide({ transform: `translateX(${newDistance}px)` });
-
-        // Move the input container slower
-        const slowerTranslation = newDistance / 2;
-        setSlideType({ transform: `translateX(${slowerTranslation + 50}px)` });
-      }
-    } else {
-      console.log("Incorrect letter", userLetter);
-      setErrorCount((prev) => prev + 1);
+    // Start the timer on first input
+    if (correctCount === 0 && errorCount === 0) {
+      startTimeRef.current = Date.now();
     }
-  }
 
-  // Update the input value state (must be after our comparison)
-  setInputValue(value);
-};
+    // Calculate words per minute (WPM)
+    const currentTime = Date.now();
+    const elapsedTime = (currentTime - startTimeRef.current) / 1000 / 60;
+    const wordsPerMinuteValue = Math.floor(correctCount / elapsedTime);
+    setWordsPerMinute(wordsPerMinuteValue);
+
+    // Determine the new rate based on current WPM
+    let newRate;
+    if (wordsPerMinuteValue > 400) {
+      newRate = 12;
+    } else if (wordsPerMinuteValue > 300) {
+      newRate = 11;
+    } else if (wordsPerMinuteValue > 200) {
+      newRate = 10;
+    } else if (wordsPerMinuteValue > 100) {
+      newRate = 10;
+    } else if (wordsPerMinuteValue > 80) {
+      newRate = 8;
+    } else if (wordsPerMinuteValue > 60) {
+      newRate = 6;
+    } else if (wordsPerMinuteValue > 40) {
+      newRate = 4;
+    } else {
+      newRate = 6;
+    }
+    setRate(newRate);
+
+    // Update highlighted words
+    highlightWords(value, wordByWord);
+
+    // Only count new characters, not deletions or corrections
+    if (isNewCharacter) {
+      // If the input value and expected text match
+      if (value === wordByWord) {
+        console.log("Correct letter", userLetter);
+
+        // Check if the last character typed is correct
+        const lastCharacterIsCorrect =
+          value[value.length - 1] === wordByWord[wordByWord.length - 1];
+
+        if (lastCharacterIsCorrect) {
+          // Only count as correct if this specific letter is correct
+          setCorrectCount((prev) => prev + 1);
+
+          // Only move text if the letter is correct
+          setDistance((prevDistance) => {
+            const newDistance = prevDistance - newRate;
+            // Move these inside a useEffect that depends on distance
+            setSlide({ transform: `translateX(${newDistance}px)` });
+            setSlideType({
+              transform: `translateX(${newDistance / 2 + 50}px)`,
+            });
+            return newDistance;
+          });
+        } else {
+          console.log("Incorrect letter", userLetter);
+          setErrorCount((prev) => prev + 1);
+        }
+      } else {
+        console.log("Incorrect letter", userLetter);
+        setErrorCount((prev) => prev + 1);
+      }
+    }
+
+    // Update the input value state (must be after our comparison)
+    setInputValue(value);
+  };
 
   const handleShowComponent = (e) => {
     e.preventDefault();
@@ -190,8 +195,6 @@ const handleTyping = (e) => {
     setDistance(100);
     setSlide({ transform: "translate(100px)" });
     setSlideType({ transform: "translate(50px)" });
-
-
 
     // unhighlight all letters
     const wordsElement = document.querySelector(".card2");
