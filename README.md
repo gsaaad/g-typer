@@ -1,70 +1,65 @@
-# Getting Started with Create React App
+# G-Typer
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Introduction
+G-Typer is a modern, web-based typing application designed to help users improve their typing skills through practice and performance tracking. With a clean interface and real-time feedback, G-Typer provides an engaging platform to enhance typing speed and accuracy.
 
-## Available Scripts
+## Features
 
-In the project directory, you can run:
+- **Real-time Performance Metrics:**
+    - Words Per Minute (WPM) calculation
+    - Accuracy percentage
+    - Error counting
+    - Success rate tracking
 
-### `npm start`
+- **Leaderboard System:**
+    - Top 10 performers displayed
+    - Ability to add your name if you qualify
+    - Historical performance tracking
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## How to Use
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Online Access
+G-Typer is available online through GitHub Pages. You can access it here:
+[G-Typer App](https://gsaaad.github.io/g-typer)
 
-### `npm test`
+### Local Setup
+If you prefer to run G-Typer locally:
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. Clone the repository:
+     ```
+     git clone https://github.com/yourusername/g-typer.git
+     ```
+2. Navigate to the project directory:
+     ```
+     cd g-typer
+     ```
+3. Open `index.html` in your browser
 
-### `npm run build`
+## Screenshots
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+![G-Typer in action](path/to/screenshot-or-gif.gif)
+*A demonstration of G-Typer's interface and functionality*
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Technical Details
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+G-Typer is built using:
+- HTML5
+- CSS3
+- JavaScript (ES6+)
+- Local Storage for leaderboard persistence
 
-### `npm run eject`
+## Contributing
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Contributions to G-Typer are welcome! Please feel free to submit a Pull Request.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## License
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+This project is licensed under the MIT License - see the LICENSE file for details.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Contact
 
-## Learn More
+If you have any questions or suggestions, please open an issue on the GitHub repository.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+---
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+George Saad - Happy Typing! 🚀
