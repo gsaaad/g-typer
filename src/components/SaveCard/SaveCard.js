@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./SaveCard.css";
+import deviceInfo from "../../deviceTracker";
 
 const SaveCard = ({ onSave, specialMessage }) => {
+  useEffect(() => {
+    console.log("Device Info:", deviceInfo);
+  }, []);
+
   const [playerName, setPlayerName] = useState("");
   const [isSaved, setIsSaved] = useState(false);
 
@@ -13,14 +18,13 @@ const SaveCard = ({ onSave, specialMessage }) => {
       return;
     }
 
-    // Call the onSave function passed from parent component
-    onSave(playerName.trim());
+    // Call the onSave function and include device information
+    onSave({ playerName: playerName.trim(), deviceInfo });
 
     // Show success state
     setIsSaved(true);
     // update playerName to empty string
     setPlayerName("");
-
   };
 
   return (

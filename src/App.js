@@ -1,14 +1,18 @@
 import "./App.css";
-import React from "react";
+import React, { useEffect } from "react";
 import Nav from "./components/Nav/Nav";
 import Main from "./components/Main/Main";
-import Footer from "./components/Footer/Footer";
+import getDeviceInfo  from "./deviceTracker";
+
 function App() {
+  useEffect(() => {
+    console.log("Device Info:", getDeviceInfo());
+  }, []);
+
   return (
     <div className="App">
       <Nav />
       <Main />
-      {/* <Footer /> */}
     </div>
   );
 }

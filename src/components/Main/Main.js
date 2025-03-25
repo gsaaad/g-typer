@@ -11,7 +11,7 @@ const Main = () => {
   const startTimeRef = useRef(null); // Ref to store start time
 
   const [slide, setSlide] = useState({ transform: "translate(100px)" });
-  const [slideType, setSlideType] = useState({ transform: "translate(50px)" });
+  const [slideType, setSlideType] = useState({ transform: "translate(100px)" });
   const [errorCount, setErrorCount] = useState(0);
   const [correctCount, setCorrectCount] = useState(0);
   const [wordsPerMinute, setWordsPerMinute] = useState(0);
@@ -150,7 +150,7 @@ const Main = () => {
     if (isNewCharacter) {
       // If the input value and expected text match
       if (value === wordByWord) {
-        console.log("Correct letter", userLetter);
+        // console.log("Correct letter", userLetter);
 
         // Check if the last character typed is correct
         const lastCharacterIsCorrect =
@@ -159,19 +159,36 @@ const Main = () => {
         if (lastCharacterIsCorrect) {
           // Only count as correct if this specific letter is correct
           setCorrectCount((prev) => prev + 1);
-
-          // Only move text if the letter is correct
           setDistance((prevDistance) => {
             const newDistance = prevDistance - newRate;
             // Move these inside a useEffect that depends on distance
             setSlide({ transform: `translateX(${newDistance}px)` });
-            setSlideType({
-              transform: `translateX(${newDistance / 2 + 50}px)`,
-            });
+            if (correctCount > 160) {
+              // Every 100 characters, reset the distance to prevent input from moving too far left
+              setSlideType({
+                transform: `translateX(${newDistance / 2 + 25}px)`,
+              });
+              if (correctCount > 160 && correctCount % 60 === 0) {
+                setSlideType({
+                  transform: `translateX(${newDistance / 2 + 25}px)`,
+                });
+              }
+            } else if (correctCount > 50) {
+              // For medium character counts
+              setSlideType({
+                transform: `translateX(${newDistance / 1.3 + 25}px)`,
+              });
+            } else {
+              // For beginning characters
+              setSlideType({
+                transform: `translateX(${newDistance / 1.5 + 25}px)`,
+              });
+            }
+
             return newDistance;
           });
         } else {
-          console.log("Incorrect letter", userLetter);
+          // console.log("Incorrect letter", userLetter);
           setErrorCount((prev) => prev + 1);
         }
       } else {
@@ -194,7 +211,7 @@ const Main = () => {
     setInputValue("");
     setDistance(100);
     setSlide({ transform: "translate(100px)" });
-    setSlideType({ transform: "translate(50px)" });
+    setSlideType({ transform: "translate(100px)" });
 
     // unhighlight all letters
     const wordsElement = document.querySelector(".card2");

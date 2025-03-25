@@ -35,7 +35,7 @@ const HighScoreCard = ({
     // then scale and subtract the error penalty
     const weightedScore =
       weightedPerformance * Math.pow(accuracyRate, 2) * 100 - errorPenalty;
-    console.log("weightedScore", weightedScore);
+    // console.log("weightedScore", weightedScore);
 
     // Return a non-negative score
     return Math.max(0, Math.round(weightedScore));
@@ -353,18 +353,19 @@ const handleScreenshot = () => {
 
         <SaveCard
           specialMessage="Enter your name below."
-          onSave={(name) => {
+          onSave={(name,deviceInfo) => {
             const userScoreWithName = Array.isArray(currentUserScore)
-              ? {
-                  name,
-                  errorCount: currentUserScore[0],
-                  successCount: currentUserScore[1],
-                  wordsPerMinute: currentUserScore[2],
-                }
-              : { ...currentUserScore, name };
+            ? {
+              name,
+              errorCount: currentUserScore[0],
+              successCount: currentUserScore[1],
+              wordsPerMinute: currentUserScore[2],
+            }
+            : { ...currentUserScore, name };
 
             // Get the current winners from localStorage
             let totalWinners = [];
+            console.log("Device Info:", deviceInfo);
             try {
               const storedWinners = localStorage.getItem("G-Typers");
               if (storedWinners) {
