@@ -125,7 +125,7 @@ const Main = () => {
     // Determine the new rate based on current WPM
     let newRate;
     if (wordsPerMinuteValue > 400) {
-      newRate = 12;
+      newRate = 13;
     } else if (wordsPerMinuteValue > 300) {
       newRate = 11;
     } else if (wordsPerMinuteValue > 200) {
@@ -164,11 +164,8 @@ const Main = () => {
             // Move these inside a useEffect that depends on distance
             setSlide({ transform: `translateX(${newDistance}px)` });
             if (correctCount > 160) {
-              // Every 100 characters, reset the distance to prevent input from moving too far left
-              setSlideType({
-                transform: `translateX(${newDistance / 2 + 25}px)`,
-              });
-              if (correctCount > 160 && correctCount % 60 === 0) {
+              if (correctCount - (160 % 10) === 0) {
+                // Regular positioning between milestones
                 setSlideType({
                   transform: `translateX(${newDistance / 2 + 25}px)`,
                 });
@@ -240,7 +237,7 @@ const Main = () => {
     startTimeRef.current = Date.now();
 
     // Set the total challenge duration (in seconds)
-    const challengeDuration = 120;
+    const challengeDuration = 90;
     let remaining = challengeDuration;
 
     // Countdown timer that updates the progress bar and stops the challenge when time is up
