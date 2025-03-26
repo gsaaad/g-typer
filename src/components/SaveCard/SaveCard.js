@@ -3,9 +3,6 @@ import "./SaveCard.css";
 import deviceInfo from "../../deviceTracker";
 
 const SaveCard = ({ onSave, specialMessage }) => {
-  useEffect(() => {
-    console.log("Device Info:", deviceInfo);
-  }, []);
 
   const [playerName, setPlayerName] = useState("");
   const [isSaved, setIsSaved] = useState(false);
@@ -18,8 +15,12 @@ const SaveCard = ({ onSave, specialMessage }) => {
       return;
     }
 
+    // call device info function
+    const userDeviceInfo = deviceInfo();
+    console.log("deviceInfo", userDeviceInfo);
+
     // Call the onSave function and include device information
-    onSave({ playerName: playerName.trim(), deviceInfo });
+    onSave(playerName, userDeviceInfo);
 
     // Show success state
     setIsSaved(true);

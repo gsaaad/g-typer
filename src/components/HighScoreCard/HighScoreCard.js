@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import html2canvas from "html2canvas";
 import SaveCard from "../SaveCard/SaveCard";
 import "./HighScoreCard.css";
+import axios from "axios";
 
 const HighScoreCard = ({
   styleHighScoreComponent,
@@ -70,7 +71,7 @@ const HighScoreCard = ({
       .map((winner) => ({
         ...winner,
         weightedScore: calculateWeightedScore(
-          winner.wordsPerMinute,
+          winner.lettersPerMinute,
           winner.errorCount,
           winner.successCount
         ),
@@ -92,13 +93,13 @@ const HighScoreCard = ({
       ? {
           errorCount: userScore[0],
           successCount: userScore[1],
-          wordsPerMinute: userScore[2],
+          lettersPerMinute: userScore[2],
         }
       : userScore;
 
     // Calculate weighted score for the current user
     const weighted = calculateWeightedScore(
-      userScoreObj.wordsPerMinute,
+      userScoreObj.lettersPerMinute,
       userScoreObj.errorCount,
       userScoreObj.successCount
     );
@@ -111,7 +112,7 @@ const HighScoreCard = ({
     if (
       !tempWinners.find(
         (winner) =>
-          winner.wordsPerMinute === userScoreObj.wordsPerMinute &&
+          winner.lettersPerMinute === userScoreObj.lettersPerMinute &&
           winner.successCount === userScoreObj.successCount &&
           winner.errorCount === userScoreObj.errorCount
       )
@@ -131,7 +132,7 @@ const HighScoreCard = ({
     const rank =
       rankedWinners.findIndex(
         (winner) =>
-          winner.wordsPerMinute === userScoreObj.wordsPerMinute &&
+          winner.lettersPerMinute === userScoreObj.lettersPerMinute &&
           winner.successCount === userScoreObj.successCount &&
           winner.errorCount === userScoreObj.errorCount
       ) + 1;
@@ -210,7 +211,7 @@ const handleScreenshot = () => {
     ? {
         errorCount: currentUserScore[0],
         successCount: currentUserScore[1],
-        wordsPerMinute: currentUserScore[2],
+        lettersPerMinute: currentUserScore[2],
       }
     : currentUserScore;
 
@@ -223,7 +224,7 @@ const handleScreenshot = () => {
   const metrics = [
     { label: "Error Count", value: scoreData.errorCount },
     { label: "Success Count", value: scoreData.successCount },
-    { label: "Words Per Minute", value: scoreData.wordsPerMinute },
+    { label: "Words Per Minute", value: scoreData.lettersPerMinute },
     { label: "Rank", value: `#${userRank}` },
   ];
 
@@ -306,7 +307,7 @@ const handleScreenshot = () => {
               <p className="col-3">{item.name || "Anonymous"}</p>
               <p className="col-2">{item.errorCount}</p>
               <p className="col-2">{item.successCount}</p>
-              <p className="col-3">{item.wordsPerMinute}</p>
+              <p className="col-3">{item.lettersPerMinute}</p>
             </li>
           ))}
         </ul>
@@ -334,7 +335,7 @@ const handleScreenshot = () => {
             || Words Per Minute:{" "}
             {Array.isArray(currentUserScore)
               ? currentUserScore[2]
-              : currentUserScore.wordsPerMinute}{" "}
+              : currentUserScore.lettersPerMinute}{" "}
             || Rank: #{userRank} || Accuracy:{" "}
             {Math.round(
               ((Array.isArray(currentUserScore)
@@ -353,19 +354,23 @@ const handleScreenshot = () => {
 
         <SaveCard
           specialMessage="Enter your name below."
-          onSave={(name,deviceInfo) => {
+          onSave={(name, deviceInfo) => {
             const userScoreWithName = Array.isArray(currentUserScore)
-            ? {
-              name,
-              errorCount: currentUserScore[0],
-              successCount: currentUserScore[1],
-              wordsPerMinute: currentUserScore[2],
-            }
-            : { ...currentUserScore, name };
+              ? {rank: userRank,
+                  name,
+                  errorCount: currentUserScore[0],
+                  successCount: currentUserScore[1],
+                  wpm: currentUserScore[2],
+                  weightedScore: userWeightedScore,
+                  accuracy: Math.round(
+                    (currentUserScore[1] / (currentUserScore[1] + currentUserScore[0])) * 100
+                  ),
+                }
+              : { ...currentUserScore, name };
 
             // Get the current winners from localStorage
             let totalWinners = [];
-            console.log("Device Info:", deviceInfo);
+            console.log("SAVINGDevice Info:", deviceInfo);
             try {
               const storedWinners = localStorage.getItem("G-Typers");
               if (storedWinners) {
@@ -375,10 +380,24 @@ const handleScreenshot = () => {
               console.error("Error retrieving winners:", error);
             }
 
+            // try sending data to backend for saving
+            // route http://127.0.0.1:5000/api/scores/newScore
+            try {
+              axios.post("http://127.0.0.1:5000/api/scores/newScore", userScoreWithName)
+                .then(response => {
+                  console.log("Score saved to backend:", response.data);
+                })
+                .catch(error => {
+                  console.error("Error saving data to backend:", error);
+                });
+            } catch (error) {
+              console.error("Error saving data to backend:", error);
+            }
+
             // Add new score to the list
             const updatedWinners = [...totalWinners, userScoreWithName]
-              .sort((a, b) => b.wordsPerMinute - a.wordsPerMinute)
-              .slice(0, 20); // Keep only top 20 scores
+              .sort((a, b) => b.lettersPerMinute - a.lettersPerMinute)
+              .slice(0, 10); // Keep only top 10 scores
 
             // Save to localStorage
             localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));

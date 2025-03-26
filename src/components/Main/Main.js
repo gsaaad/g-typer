@@ -237,7 +237,7 @@ const Main = () => {
     startTimeRef.current = Date.now();
 
     // Set the total challenge duration (in seconds)
-    const challengeDuration = 90;
+    const challengeDuration = 10;
     let remaining = challengeDuration;
 
     // Countdown timer that updates the progress bar and stops the challenge when time is up
@@ -342,5 +342,7 @@ const Main = () => {
     </div>
   );
 };
+
+
 
 export default Main;
