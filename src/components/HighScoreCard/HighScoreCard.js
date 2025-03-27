@@ -11,7 +11,7 @@ const HighScoreCard = ({
 }) => {
   // Use state for winners to allow re-rendering
   const [sortedWinners, setSortedWinners] = useState([]);
-  const [userRank, setUserRank] = useState(-1);
+  const [userRank, setUserRank] = useState();
   const [isTopTen, setIsTopTen] = useState(false);
   const [userWeightedScore, setUserWeightedScore] = useState(0);
   const [resetSaveForm, setResetSaveForm] = useState(0);
@@ -62,38 +62,41 @@ const HighScoreCard = ({
     let totalWinners = [];
 
     // Get stored winners from localStorage
-    try {
-      const storedWinners = localStorage.getItem("G-Typers");
-      if (storedWinners) {
-        const winnersFromStorage = JSON.parse(storedWinners);
-        if (Array.isArray(winnersFromStorage)) {
-          totalWinners = [...winnersFromStorage];
-        } else {
-          console.error("Expected winners to be an array");
+    // try {
+    //   const storedWinners = localStorage.getItem("G-Typers");
+    //   if (storedWinners) {
+    //     const winnersFromStorage = JSON.parse(storedWinners);
+    //     if (Array.isArray(winnersFromStorage)) {
+    //       totalWinners = [...winnersFromStorage];
+    //     } else {
+    //       console.error("Expected winners to be an array");
+    //     }
+    //   }
+    // } catch (error) {
+    //   console.error("Error parsing winners from localStorage:", error);
+    // }
+    // Try getting winners from backend
+    (async () => {
+      try {
+        // route is http://127.0.0.1:5000/api/scores/topScores
+        const response = await axios.get("http://127.0.0.1:5000/api/scores/topScores");
+        if (response.data && Array.isArray(response.data)) {
+          totalWinners = response.data;
         }
+      } catch (error) {
+        console.error("Error retrieving winners from backend:", error);
       }
-    } catch (error) {
-      console.error("Error parsing winners from localStorage:", error);
-    }
 
-    // Process and sort winners
-    const processed = totalWinners
-      .map((winner) => ({
-        ...winner,
-        weightedScore: calculateWeightedScore(
-          winner.lpm,
-          winner.errorCount,
-          winner.successCount
-        ),
-      }))
-      .sort((a, b) => b.weightedScore - a.weightedScore);
+      const processed = totalWinners;
+      if (currentUserScore) {
+        calculateUserRank(processed, currentUserScore);
+      }
 
-    setSortedWinners(processed);
+      setSortedWinners(processed);
 
-    // Calculate user's rank if we have their score
-    if (currentUserScore) {
-      calculateUserRank(processed, currentUserScore);
-    }
+      // loadWinners();
+    })();
+
   };
 
   // Function to calculate user's rank
@@ -311,7 +314,8 @@ const HighScoreCard = ({
           <p className="col-3">Correct LPM</p>
         </div>
         <ul className="score-list">
-          {sortedWinners.slice(0, 10).map((item, index) => (
+          {sortedWinners.map((item, index) => (
+
             <li className="row" key={`winner-${index + 1}`}>
               <p className={`col-2 score-rank rank-${index + 1}`}>
                 {index + 1}
@@ -407,7 +411,7 @@ const HighScoreCard = ({
                   userScoreWithName
                 )
                 .then((response) => {
-                  console.log("Score saved to backend:", response.data);
+                  // console.log("Score saved to backend:", response.data);
                 })
                 .catch((error) => {
                   console.error("Error saving data to backend:", error);
@@ -423,7 +427,7 @@ const HighScoreCard = ({
                   userDevice
                 )
                 .then((response) => {
-                  console.log("info saved to backend:", response.data);
+                  // console.log("info saved to backend:", response.data);
                 });
 
             }catch(error){
@@ -436,8 +440,8 @@ const HighScoreCard = ({
               .slice(0, 10); // Keep only top 10 scores
 
             // Save to localStorage
-            localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));
-            console.log("Score saved successfully!");
+            // localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));
+            // console.log("Score saved successfully!");
 
             // Reload winners to update the display
             loadWinners();

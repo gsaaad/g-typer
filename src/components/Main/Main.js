@@ -17,6 +17,7 @@ const Main = () => {
   const [wordsPerMinute, setWordsPerMinute] = useState(0);
   const [distance, setDistance] = useState(100);
   const [inputValue, setInputValue] = useState("");
+  const [backspaceCount, setBackspaceCount] = useState(0);
   const [styleComponent, setStyleComponent] = useState({ display: "none" });
   const [styleReadyComponent, setStyleReadyComponent] = useState({
     display: "block",
@@ -26,6 +27,7 @@ const Main = () => {
   });
   const [userScore, setUserScore] = useState([0, 0, 0]);
   const [rate, setRate] = useState(10.5);
+
   const generateWords = () => {
     return randomwords(500);
   };
@@ -110,6 +112,29 @@ const Main = () => {
     // Track if this is a new character or a deletion
     const isNewCharacter = value.length > inputValue.length;
     const userLetter = isNewCharacter ? value[valueLength - 1] : null;
+    // Check if the user is backspacing
+    if (valueLength < inputValue.length) {
+      // Check if the last character was correct
+      const lastCharWasCorrect =
+        inputValue[inputValue.length - 1] === totalWords[inputValue.length - 1];
+
+      if (lastCharWasCorrect) {
+        // Increment backspace count if the last character was correct
+        setBackspaceCount((prevCount) => prevCount + 1);
+
+        // Prevent backspacing if the limit is reached
+        if (backspaceCount >= 3) {
+          e.preventDefault(); // Prevent further backspacing
+          return; // Exit the function early
+        }
+      } else {
+        // Reset backspace count if the last character was incorrect
+        setBackspaceCount(0);
+      }
+    } else {
+      // Reset backspace count if the user is typing forward
+      setBackspaceCount(0);
+    }
 
     // Start the timer on first input
     if (correctCount === 0 && errorCount === 0) {
@@ -125,9 +150,9 @@ const Main = () => {
     // Determine the new rate based on current WPM
     let newRate;
     if (wordsPerMinuteValue > 400) {
-      newRate = 13;
+      newRate = 12;
     } else if (wordsPerMinuteValue > 300) {
-      newRate = 11;
+      newRate = 11.5;
     } else if (wordsPerMinuteValue > 200) {
       newRate = 10;
     } else if (wordsPerMinuteValue > 100) {
@@ -189,7 +214,7 @@ const Main = () => {
           setErrorCount((prev) => prev + 1);
         }
       } else {
-        console.log("Incorrect letter", userLetter);
+        // console.log("Incorrect letter", userLetter);
         setErrorCount((prev) => prev + 1);
       }
     }
@@ -239,7 +264,7 @@ const Main = () => {
     startTimeRef.current = Date.now();
 
     // Set the total challenge duration (in seconds) - 2 minutes
-    const challengeDuration = 120;
+    const challengeDuration = 4;
     let remaining = challengeDuration;
 
     // Countdown timer that updates the progress bar and stops the challenge when time is up
@@ -268,7 +293,7 @@ const Main = () => {
 
         // Use our captured latest values for the score
         const scoreList = [finalErrorCount, finalCorrectCount, finalWPM];
-        console.log("Time's up. User Scores:", scoreList);
+        // console.log("Time's up. User Scores:", scoreList);
         setUserScore(scoreList);
       }
       remaining--;
@@ -318,7 +343,7 @@ const Main = () => {
 
         <div className="card">
           <input
-            className="input"
+            className="input glowing-input"
             id="input"
             style={slideType}
             value={inputValue}

@@ -190,6 +190,20 @@ h2 {
 .rate-error {
   display: flex;
 }
+
+.glowing-input {
+  border: 2px solid #00bcd4; /* Initial border color */
+  border-radius: 5px; /* Optional: Add rounded corners */
+  padding: 8px; /* Optional: Add some padding */
+  font-size: 16px; /* Optional: Adjust font size */
+  transition: box-shadow 0.3s ease; /* Add a smooth transition */
+}
+
+.glowing-input:focus {
+  outline: none; /* Remove the default focus outline */
+  box-shadow: 0 0 10px 2px rgba(0, 188, 212, 0.5); /* Add a glowing box shadow */
+  border-color: #03a9f4; /* Change border color on focus */
+}
 @keyframes spin {
   0% {
     --rotate: 22deg;

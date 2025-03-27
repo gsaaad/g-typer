@@ -20,7 +20,7 @@ const SaveCard = ({ onSave, specialMessage, resetToken}) => {
 
     // call device info function
     const userDeviceInfo = deviceInfo();
-    console.log("deviceInfo", userDeviceInfo);
+    // console.log("deviceInfo", userDeviceInfo);
 
     // Call the onSave function and include device information
     onSave(playerName, userDeviceInfo);
