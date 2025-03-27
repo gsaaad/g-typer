@@ -389,7 +389,6 @@ const HighScoreCard = ({
             // Get the current winners from localStorage
             let totalWinners = [];
             const userDevice = {name, deviceInfo};
-            console.log("SAVINGDevice Info:", deviceInfo);
             try {
               const storedWinners = localStorage.getItem("G-Typers");
               if (storedWinners) {
@@ -418,10 +417,14 @@ const HighScoreCard = ({
             }
             // route to userDevice
             try{
-              axios.post("http://127.0.0.1:5000/api/scores/userDevice", userDevice)
-              .then((response) => {
-                console.log("info saved to backend:", response.data);
-              })
+              axios
+                .post(
+                  "http://127.0.0.1:5000/api/device/newUserDevice",
+                  userDevice
+                )
+                .then((response) => {
+                  console.log("info saved to backend:", response.data);
+                });
 
             }catch(error){
               console.error("Error saving data to backend:", error);
