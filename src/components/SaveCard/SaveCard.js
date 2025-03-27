@@ -2,11 +2,14 @@ import { useState, useEffect } from "react";
 import "./SaveCard.css";
 import deviceInfo from "../../deviceTracker";
 
-const SaveCard = ({ onSave, specialMessage }) => {
-
+const SaveCard = ({ onSave, specialMessage, resetToken}) => {
   const [playerName, setPlayerName] = useState("");
   const [isSaved, setIsSaved] = useState(false);
 
+  // Reset isSaved state whenever resetToken changes
+  useEffect(() => {
+    setIsSaved(false);
+  }, [resetToken]);
   const handleSubmit = (e) => {
     e.preventDefault();
 

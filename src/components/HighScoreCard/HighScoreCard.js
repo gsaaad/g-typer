@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
+import axios from "axios";
 import html2canvas from "html2canvas";
+import { useEffect, useState } from "react";
 import SaveCard from "../SaveCard/SaveCard";
 import "./HighScoreCard.css";
-import axios from "axios";
 
 const HighScoreCard = ({
   styleHighScoreComponent,
@@ -15,7 +15,7 @@ const HighScoreCard = ({
   const [isTopTen, setIsTopTen] = useState(false);
   const [userWeightedScore, setUserWeightedScore] = useState(0);
   const [resetSaveForm, setResetSaveForm] = useState(0);
-  const calculateWeightedScore = (wpm, errorCount, successCount) => {
+  const calculateWeightedScore = (lpm, errorCount, successCount) => {
     // Calculate accuracy percentage
     const totalKeystrokes = errorCount + successCount;
     const accuracyRate =
@@ -29,7 +29,7 @@ const HighScoreCard = ({
     const successWeight = 1.5;
 
     // Combine weighted performance factors
-    const weightedPerformance = wpm * wpmWeight + successCount * successWeight;
+    const weightedPerformance = lpm * wpmWeight + successCount * successWeight;
 
     // Calculate weighted score:
     // Multiply the combined performance by accuracy squared (to heavily favor accuracy),
@@ -40,6 +40,16 @@ const HighScoreCard = ({
 
     // Return a non-negative score
     return Math.max(0, Math.round(weightedScore));
+  };
+
+
+  const handleTryAgain = (e) => {
+    // Prevent default if it's a form submission
+    if (e) e.preventDefault();
+    // Call the parent component's handler
+    handleShowComponent(e);
+    // Increment resetToken to trigger the useEffect in SaveCard
+    setResetSaveForm((prev) => prev + 1);
   };
 
   // Load and process winners data
@@ -71,7 +81,7 @@ const HighScoreCard = ({
       .map((winner) => ({
         ...winner,
         weightedScore: calculateWeightedScore(
-          winner.lettersPerMinute,
+          winner.lpm,
           winner.errorCount,
           winner.successCount
         ),
@@ -93,13 +103,13 @@ const HighScoreCard = ({
       ? {
           errorCount: userScore[0],
           successCount: userScore[1],
-          lettersPerMinute: userScore[2],
+          lpm: userScore[2],
         }
       : userScore;
 
     // Calculate weighted score for the current user
     const weighted = calculateWeightedScore(
-      userScoreObj.lettersPerMinute,
+      userScoreObj.lpm,
       userScoreObj.errorCount,
       userScoreObj.successCount
     );
@@ -112,7 +122,7 @@ const HighScoreCard = ({
     if (
       !tempWinners.find(
         (winner) =>
-          winner.lettersPerMinute === userScoreObj.lettersPerMinute &&
+          winner.lpm === userScoreObj.lpm &&
           winner.successCount === userScoreObj.successCount &&
           winner.errorCount === userScoreObj.errorCount
       )
@@ -132,7 +142,7 @@ const HighScoreCard = ({
     const rank =
       rankedWinners.findIndex(
         (winner) =>
-          winner.lettersPerMinute === userScoreObj.lettersPerMinute &&
+          winner.lpm === userScoreObj.lpm &&
           winner.successCount === userScoreObj.successCount &&
           winner.errorCount === userScoreObj.errorCount
       ) + 1;
@@ -148,144 +158,146 @@ const HighScoreCard = ({
     }
   }, [currentUserScore, sortedWinners.length]);
 
-const handleScreenshot = () => {
-  // Create a styled element for capturing
-  const captureElement = document.createElement("div");
-  captureElement.style.background = "#1c1c1c";
-  captureElement.style.padding = "30px";
-  captureElement.style.width = "600px";
-  captureElement.style.borderRadius = "8px";
-  captureElement.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
-  captureElement.style.position = "fixed";
-  captureElement.style.top = "-9999px";
-  captureElement.style.left = "-9999px";
+  const handleScreenshot = () => {
+    // Create a styled element for capturing
+    const captureElement = document.createElement("div");
+    captureElement.style.background = "#1c1c1c";
+    captureElement.style.padding = "30px";
+    captureElement.style.width = "600px";
+    captureElement.style.borderRadius = "8px";
+    captureElement.style.boxShadow = "0 4px 12px rgba(0,0,0,0.2)";
+    captureElement.style.position = "fixed";
+    captureElement.style.top = "-9999px";
+    captureElement.style.left = "-9999px";
 
-  // Add G-Typer logo/title
-  const titleEl = document.createElement("h2");
-  titleEl.textContent = "G-Typer Score Card";
-  titleEl.style.color = "#074994";
-  titleEl.style.marginBottom = "20px";
-  titleEl.style.fontFamily = "Arial, sans-serif";
-  titleEl.style.borderBottom = "2px solid #333";
-  titleEl.style.paddingBottom = "10px";
-  captureElement.appendChild(titleEl);
+    // Add G-Typer logo/title
+    const titleEl = document.createElement("h2");
+    titleEl.textContent = "G-Typer Score Card";
+    titleEl.style.color = "#074994";
+    titleEl.style.marginBottom = "20px";
+    titleEl.style.fontFamily = "Arial, sans-serif";
+    titleEl.style.borderBottom = "2px solid #333";
+    titleEl.style.paddingBottom = "10px";
+    captureElement.appendChild(titleEl);
 
-  // Add date
-  const dateEl = document.createElement("p");
-  dateEl.textContent = `Date: ${new Date().toLocaleDateString()}`;
-  dateEl.style.color = "#cccccc";
-  dateEl.style.fontFamily = "Arial, sans-serif";
-  dateEl.style.marginBottom = "15px";
-  captureElement.appendChild(dateEl);
+    // Add date
+    const dateEl = document.createElement("p");
+    dateEl.textContent = `Date: ${new Date().toLocaleDateString()}`;
+    dateEl.style.color = "#cccccc";
+    dateEl.style.fontFamily = "Arial, sans-serif";
+    dateEl.style.marginBottom = "15px";
+    captureElement.appendChild(dateEl);
 
-  // Add duration
-  const durationEl = document.createElement("p");
-  durationEl.textContent = `Duration: 120 seconds`;
-  durationEl.style.color = "#cccccc";
-  durationEl.style.fontFamily = "Arial, sans-serif";
-  durationEl.style.marginBottom = "15px";
-  captureElement.appendChild(durationEl);
+    // Add duration
+    const durationEl = document.createElement("p");
+    durationEl.textContent = `Duration: 120 seconds`;
+    durationEl.style.color = "#cccccc";
+    durationEl.style.fontFamily = "Arial, sans-serif";
+    durationEl.style.marginBottom = "15px";
+    captureElement.appendChild(durationEl);
 
-  // calcuate accuracy
-  const accuracyEl = document.createElement("p");
-  accuracyEl.textContent = `Accuracy: ${Math.round(
-    (Array.isArray(currentUserScore)
-      ? currentUserScore[1]
-      : currentUserScore.successCount) /
-    ((Array.isArray(currentUserScore)
-      ? currentUserScore[1]
-      : currentUserScore.successCount) +
-      (Array.isArray(currentUserScore)
-        ? currentUserScore[0]
-        : currentUserScore.errorCount)) *
-    100
-  )}%`;
-  accuracyEl.style.color = "#cccccc";
-  accuracyEl.style.fontFamily = "Arial, sans-serif";
-  accuracyEl.style.marginBottom = "15px";
-  captureElement.appendChild(accuracyEl);
+    // calcuate accuracy
+    const accuracyEl = document.createElement("p");
+    accuracyEl.textContent = `Accuracy: ${Math.round(
+      ((Array.isArray(currentUserScore)
+        ? currentUserScore[1]
+        : currentUserScore.successCount) /
+        ((Array.isArray(currentUserScore)
+          ? currentUserScore[1]
+          : currentUserScore.successCount) +
+          (Array.isArray(currentUserScore)
+            ? currentUserScore[0]
+            : currentUserScore.errorCount))) *
+        100
+    )}%`;
+    accuracyEl.style.color = "#cccccc";
+    accuracyEl.style.fontFamily = "Arial, sans-serif";
+    accuracyEl.style.marginBottom = "15px";
+    captureElement.appendChild(accuracyEl);
 
+    // Add score details
+    const scoreData = Array.isArray(currentUserScore)
+      ? {
+          errorCount: currentUserScore[0],
+          successCount: currentUserScore[1],
+          lpm: currentUserScore[2],
+        }
+      : currentUserScore;
 
-  // Add score details
-  const scoreData = Array.isArray(currentUserScore)
-    ? {
-        errorCount: currentUserScore[0],
-        successCount: currentUserScore[1],
-        lettersPerMinute: currentUserScore[2],
-      }
-    : currentUserScore;
+    const scoreDetailsEl = document.createElement("div");
+    scoreDetailsEl.style.display = "grid";
+    scoreDetailsEl.style.gridTemplateColumns = "1fr 1fr";
+    scoreDetailsEl.style.gap = "15px";
+    scoreDetailsEl.style.marginBottom = "20px";
 
-  const scoreDetailsEl = document.createElement("div");
-  scoreDetailsEl.style.display = "grid";
-  scoreDetailsEl.style.gridTemplateColumns = "1fr 1fr";
-  scoreDetailsEl.style.gap = "15px";
-  scoreDetailsEl.style.marginBottom = "20px";
+    const metrics = [
+      { label: "Rank", value: `#${userRank}` },
+      {
+        label: "Correct Letters Per Minute",
+        value: scoreData.lpm,
+      },
+      { label: "Success Count", value: scoreData.successCount },
+      { label: "Error Count", value: scoreData.errorCount },
+    ];
 
-  const metrics = [
-    { label: "Error Count", value: scoreData.errorCount },
-    { label: "Success Count", value: scoreData.successCount },
-    { label: "Words Per Minute", value: scoreData.lettersPerMinute },
-    { label: "Rank", value: `#${userRank}` },
-  ];
+    metrics.forEach((metric) => {
+      const metricEl = document.createElement("div");
+      metricEl.style.background = "#2a2a2a";
+      metricEl.style.padding = "15px";
+      metricEl.style.borderRadius = "4px";
 
-  metrics.forEach((metric) => {
-    const metricEl = document.createElement("div");
-    metricEl.style.background = "#2a2a2a";
-    metricEl.style.padding = "15px";
-    metricEl.style.borderRadius = "4px";
+      const labelEl = document.createElement("div");
+      labelEl.textContent = metric.label;
+      labelEl.style.color = "#999";
+      labelEl.style.fontSize = "14px";
+      labelEl.style.marginBottom = "5px";
 
-    const labelEl = document.createElement("div");
-    labelEl.textContent = metric.label;
-    labelEl.style.color = "#999";
-    labelEl.style.fontSize = "14px";
-    labelEl.style.marginBottom = "5px";
+      const valueEl = document.createElement("div");
+      valueEl.textContent = metric.value;
+      valueEl.style.color = "#ffffff";
+      valueEl.style.fontSize = "24px";
+      valueEl.style.fontWeight = "bold";
 
-    const valueEl = document.createElement("div");
-    valueEl.textContent = metric.value;
-    valueEl.style.color = "#ffffff";
-    valueEl.style.fontSize = "24px";
-    valueEl.style.fontWeight = "bold";
-
-    metricEl.appendChild(labelEl);
-    metricEl.appendChild(valueEl);
-    scoreDetailsEl.appendChild(metricEl);
-  });
-
-  captureElement.appendChild(scoreDetailsEl);
-
-  // Add footer
-  const footerEl = document.createElement("div");
-  footerEl.style.marginTop = "20px";
-  footerEl.style.textAlign = "center";
-  footerEl.style.color = "#777";
-  footerEl.style.fontSize = "12px";
-  footerEl.textContent = "Generated by G-Typer • https://g-typer.example.com";
-  captureElement.appendChild(footerEl);
-
-  // Append to DOM temporarily
-  document.body.appendChild(captureElement);
-
-  // Use html2canvas to capture the element
-  html2canvas(captureElement, {
-    backgroundColor: "#1c1c1c",
-    scale: 2, // Higher quality
-  })
-    .then((canvas) => {
-      // Convert canvas to image and download
-      const image = canvas.toDataURL("image/png");
-      const link = document.createElement("a");
-      link.download = `g-typer-score-${Date.now()}.png`;
-      link.href = image;
-      link.click();
-
-      // Clean up
-      document.body.removeChild(captureElement);
-    })
-    .catch((err) => {
-      console.error("Error creating screenshot:", err);
-      document.body.removeChild(captureElement);
+      metricEl.appendChild(labelEl);
+      metricEl.appendChild(valueEl);
+      scoreDetailsEl.appendChild(metricEl);
     });
-};
+
+    captureElement.appendChild(scoreDetailsEl);
+
+    // Add footer
+    const footerEl = document.createElement("div");
+    footerEl.style.marginTop = "20px";
+    footerEl.style.textAlign = "center";
+    footerEl.style.color = "#777";
+    footerEl.style.fontSize = "12px";
+    footerEl.textContent = "Generated by G-Typer • https://g-typer.example.com";
+    captureElement.appendChild(footerEl);
+
+    // Append to DOM temporarily
+    document.body.appendChild(captureElement);
+
+    // Use html2canvas to capture the element
+    html2canvas(captureElement, {
+      backgroundColor: "#1c1c1c",
+      scale: 2, // Higher quality
+    })
+      .then((canvas) => {
+        // Convert canvas to image and download
+        const image = canvas.toDataURL("image/png");
+        const link = document.createElement("a");
+        link.download = `g-typer-score-${Date.now()}.png`;
+        link.href = image;
+        link.click();
+
+        // Clean up
+        document.body.removeChild(captureElement);
+      })
+      .catch((err) => {
+        console.error("Error creating screenshot:", err);
+        document.body.removeChild(captureElement);
+      });
+  };
 
   return (
     <section className="high-score" style={styleHighScoreComponent}>
@@ -296,7 +308,7 @@ const handleScreenshot = () => {
           <p className="col-3">Name</p>
           <p className="col-2">Error Count</p>
           <p className="col-2">Success Count</p>
-          <p className="col-3">WPM</p>
+          <p className="col-3">Correct LPM</p>
         </div>
         <ul className="score-list">
           {sortedWinners.slice(0, 10).map((item, index) => (
@@ -307,7 +319,7 @@ const handleScreenshot = () => {
               <p className="col-3">{item.name || "Anonymous"}</p>
               <p className="col-2">{item.errorCount}</p>
               <p className="col-2">{item.successCount}</p>
-              <p className="col-3">{item.lettersPerMinute}</p>
+              <p className="col-3">{item.lpm}</p>
             </li>
           ))}
         </ul>
@@ -332,10 +344,10 @@ const handleScreenshot = () => {
             {Array.isArray(currentUserScore)
               ? currentUserScore[1]
               : currentUserScore.successCount}{" "}
-            || Words Per Minute:{" "}
+            || Correct Letters Per Minute:{" "}
             {Array.isArray(currentUserScore)
               ? currentUserScore[2]
-              : currentUserScore.lettersPerMinute}{" "}
+              : currentUserScore.lpm}{" "}
             || Rank: #{userRank} || Accuracy:{" "}
             {Math.round(
               ((Array.isArray(currentUserScore)
@@ -348,28 +360,35 @@ const handleScreenshot = () => {
                     ? currentUserScore[0]
                     : currentUserScore.errorCount))) *
                 100
-            )} %
+            )}{" "}
+            %
           </p>
         </div>
 
         <SaveCard
+        resetToken={resetSaveForm}
           specialMessage="Enter your name below."
-          onSave={(name, deviceInfo) => {
+          onSave={(name, deviceInfo,) => {
             const userScoreWithName = Array.isArray(currentUserScore)
-              ? {rank: userRank,
+              ? {
+                  rank: userRank,
                   name,
                   errorCount: currentUserScore[0],
                   successCount: currentUserScore[1],
-                  wpm: currentUserScore[2],
+                  lpm: currentUserScore[2],
                   weightedScore: userWeightedScore,
                   accuracy: Math.round(
-                    (currentUserScore[1] / (currentUserScore[1] + currentUserScore[0])) * 100
+                    (currentUserScore[1] /
+                      (currentUserScore[1] + currentUserScore[0])) *
+                      100
                   ),
                 }
               : { ...currentUserScore, name };
 
+
             // Get the current winners from localStorage
             let totalWinners = [];
+            const userDevice = {name, deviceInfo};
             console.log("SAVINGDevice Info:", deviceInfo);
             try {
               const storedWinners = localStorage.getItem("G-Typers");
@@ -383,20 +402,34 @@ const handleScreenshot = () => {
             // try sending data to backend for saving
             // route http://127.0.0.1:5000/api/scores/newScore
             try {
-              axios.post("http://127.0.0.1:5000/api/scores/newScore", userScoreWithName)
-                .then(response => {
+              axios
+                .post(
+                  "http://127.0.0.1:5000/api/scores/newScore",
+                  userScoreWithName
+                )
+                .then((response) => {
                   console.log("Score saved to backend:", response.data);
                 })
-                .catch(error => {
+                .catch((error) => {
                   console.error("Error saving data to backend:", error);
                 });
             } catch (error) {
               console.error("Error saving data to backend:", error);
             }
+            // route to userDevice
+            try{
+              axios.post("http://127.0.0.1:5000/api/scores/userDevice", userDevice)
+              .then((response) => {
+                console.log("info saved to backend:", response.data);
+              })
+
+            }catch(error){
+              console.error("Error saving data to backend:", error);
+            }
 
             // Add new score to the list
             const updatedWinners = [...totalWinners, userScoreWithName]
-              .sort((a, b) => b.lettersPerMinute - a.lettersPerMinute)
+              .sort((a, b) => b.lpm - a.lpm)
               .slice(0, 10); // Keep only top 10 scores
 
             // Save to localStorage
@@ -411,7 +444,7 @@ const handleScreenshot = () => {
           Download Screenshot
         </button>
 
-        <button onClick={handleShowComponent} className="redo-button">
+        <button onClick={handleTryAgain} className="redo-button">
           Try Again
         </button>
       </div>

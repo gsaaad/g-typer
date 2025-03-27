@@ -209,6 +209,8 @@ const Main = () => {
     setDistance(100);
     setSlide({ transform: "translate(100px)" });
     setSlideType({ transform: "translate(100px)" });
+    // reset the username
+    // setPlayerName("");
 
     // unhighlight all letters
     const wordsElement = document.querySelector(".card2");
@@ -236,8 +238,8 @@ const Main = () => {
     // Initialize start time for typing challenge
     startTimeRef.current = Date.now();
 
-    // Set the total challenge duration (in seconds)
-    const challengeDuration = 10;
+    // Set the total challenge duration (in seconds) - 2 minutes
+    const challengeDuration = 120;
     let remaining = challengeDuration;
 
     // Countdown timer that updates the progress bar and stops the challenge when time is up
