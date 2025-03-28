@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/g-typer/static/css/main.adf8fab0.css",
-    "main.js": "/g-typer/static/js/main.9342766d.js",
+    "main.css": "/g-typer/static/css/main.7f2f191a.css",
+    "main.js": "/g-typer/static/js/main.0feba4a6.js",
     "index.html": "/g-typer/index.html",
-    "main.adf8fab0.css.map": "/g-typer/static/css/main.adf8fab0.css.map",
-    "main.9342766d.js.map": "/g-typer/static/js/main.9342766d.js.map"
+    "main.7f2f191a.css.map": "/g-typer/static/css/main.7f2f191a.css.map",
+    "main.0feba4a6.js.map": "/g-typer/static/js/main.0feba4a6.js.map"
   },
   "entrypoints": [
-    "static/css/main.adf8fab0.css",
-    "static/js/main.9342766d.js"
+    "static/css/main.7f2f191a.css",
+    "static/js/main.0feba4a6.js"
   ]
 }
