@@ -179,3 +179,7 @@ li {
   transform: translateY(-3px);
   box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
 }
+.current-user-score {
+  background-color: rgba(0, 100, 200, 0.2);
+  border-left: 3px solid #0088ff;
+}

@@ -15,6 +15,8 @@ const HighScoreCard = ({
   const [isTopTen, setIsTopTen] = useState(false);
   const [userWeightedScore, setUserWeightedScore] = useState(0);
   const [resetSaveForm, setResetSaveForm] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+
   const calculateWeightedScore = (lpm, errorCount, successCount) => {
     // Calculate accuracy percentage
     const totalKeystrokes = errorCount + successCount;
@@ -41,7 +43,9 @@ const HighScoreCard = ({
     // Return a non-negative score
     return Math.max(0, Math.round(weightedScore));
   };
-
+  useEffect(() => {
+    loadWinners();
+  }, []);
 
   const handleTryAgain = (e) => {
     // Prevent default if it's a form submission
@@ -52,51 +56,129 @@ const HighScoreCard = ({
     setResetSaveForm((prev) => prev + 1);
   };
 
-  // Load and process winners data
-  useEffect(() => {
-    loadWinners();
-  }, []);
-
   // Function to load winners from localStorage and process them
-  const loadWinners = () => {
-    let totalWinners = [];
+  // const loadWinners = async () => {
+  //   // Prevent duplicate calls
+  //   if (isLoading) return;
 
-    // Get stored winners from localStorage
-    // try {
-    //   const storedWinners = localStorage.getItem("G-Typers");
-    //   if (storedWinners) {
-    //     const winnersFromStorage = JSON.parse(storedWinners);
-    //     if (Array.isArray(winnersFromStorage)) {
-    //       totalWinners = [...winnersFromStorage];
-    //     } else {
-    //       console.error("Expected winners to be an array");
-    //     }
-    //   }
-    // } catch (error) {
-    //   console.error("Error parsing winners from localStorage:", error);
-    // }
-    // Try getting winners from backend
-    (async () => {
-      try {
-        // route is http://127.0.0.1:5000/api/scores/topScores
-        const response = await axios.get("http://127.0.0.1:5000/api/scores/topScores");
-        if (response.data && Array.isArray(response.data)) {
-          totalWinners = response.data;
+  //   setIsLoading(true);
+  //   try {
+  //     const response = await axios.get(
+  //       "http://127.0.0.1:5000/api/scores/topScores"
+  //     );
+
+  //     if (response.data && Array.isArray(response.data)) {
+  //       const processed = response.data;
+
+  //       setSortedWinners(processed);
+
+  //       // Update user rank if we have a score
+  //       if (currentUserScore) {
+  //         calculateUserRank(processed, currentUserScore);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error("Error retrieving winners from backend:", error);
+  //   } finally {
+  //     setIsLoading(false);
+  //   }
+  // };
+
+  const loadWinners = async () => {
+    // Prevent duplicate calls
+    if (isLoading) return;
+
+    setIsLoading(true);
+    try {
+      const response = await axios.get(
+        "http://127.0.0.1:5000/api/scores/topScores"
+      );
+
+      if (response.data && Array.isArray(response.data)) {
+        const apiWinners = response.data;
+
+        // Process scores and integrate user's score if needed
+        if (currentUserScore) {
+          // Create a copy of the winners for manipulation
+          const processedWinners = [...apiWinners];
+
+          // Convert user score to required format
+          const userScoreObj = Array.isArray(currentUserScore)
+            ? {
+                errorCount: currentUserScore[0],
+                successCount: currentUserScore[1],
+                lpm: currentUserScore[2],
+              }
+            : currentUserScore;
+
+          // Calculate weighted score for current user
+          const weighted = calculateWeightedScore(
+            userScoreObj.lpm,
+            userScoreObj.errorCount,
+            userScoreObj.successCount
+          );
+          setUserWeightedScore(weighted);
+
+          // Create user score object with weighted score
+          const userScoreWithWeighted = {
+            ...userScoreObj,
+            weightedScore: weighted,
+            // Use temporary name if not yet submitted
+            name: userScoreObj.name || "Your Score",
+            // Add a flag to highlight this row in the UI
+            isCurrentUser: true,
+          };
+
+          // Check if user's score already exists in the list (by exact match)
+          const existingScoreIndex = processedWinners.findIndex(
+            (winner) =>
+              winner.lpm === userScoreObj.lpm &&
+              winner.successCount === userScoreObj.successCount &&
+              winner.errorCount === userScoreObj.errorCount
+          );
+
+          // Only add user's score if it doesn't exist
+          if (existingScoreIndex === -1) {
+            processedWinners.push(userScoreWithWeighted);
+          } else {
+            // Mark the existing entry as the current user
+            processedWinners[existingScoreIndex].isCurrentUser = true;
+            if (!processedWinners[existingScoreIndex].name) {
+              processedWinners[existingScoreIndex].name = "Your Score";
+            }
+          }
+
+          // Sort by weighted score - higher scores first
+          const rankedWinners = processedWinners.sort(
+            (a, b) => b.weightedScore - a.weightedScore
+          );
+
+          // Find user's position in the ranked list
+          const rank =
+            rankedWinners.findIndex((winner) => winner.isCurrentUser) + 1;
+          const finalRank = rank > 0 ? rank : rankedWinners.length;
+
+          setUserRank(finalRank);
+          setIsTopTen(finalRank <= 10);
+
+          // If user is in top 10, ensure their score is visible in the displayed list
+          // Otherwise just show the original top 10 from the API
+          if (finalRank <= 10) {
+            // Get top 10 scores, ensuring user's score is included
+            setSortedWinners(rankedWinners.slice(0, 10));
+          } else {
+            setSortedWinners(apiWinners.slice(0, 10));
+          }
+        } else {
+          // No user score, just show the top 10 from API
+          setSortedWinners(apiWinners.slice(0, 10));
         }
-      } catch (error) {
-        console.error("Error retrieving winners from backend:", error);
       }
-
-      const processed = totalWinners;
-      if (currentUserScore) {
-        calculateUserRank(processed, currentUserScore);
-      }
-
-      setSortedWinners(processed);
-
-      // loadWinners();
-    })();
-
+    } catch (error) {
+      console.error("Error retrieving winners from backend:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // Function to calculate user's rank
@@ -121,22 +203,26 @@ const HighScoreCard = ({
     // Find where this score would rank
     const tempWinners = [...winners];
 
-    // Check if this exact score already exists
-    if (
-      !tempWinners.find(
-        (winner) =>
-          winner.lpm === userScoreObj.lpm &&
-          winner.successCount === userScoreObj.successCount &&
-          winner.errorCount === userScoreObj.errorCount
-      )
-    ) {
-      tempWinners.push({
-        ...userScoreObj,
-        weightedScore: weighted,
-      });
+    // Create a user score object with weighted score
+    const userScoreWithWeighted = {
+      ...userScoreObj,
+      weightedScore: weighted,
+    };
+
+    // Check if this exact score already exists in the list
+    const existingScoreIndex = tempWinners.findIndex(
+      (winner) =>
+        winner.lpm === userScoreObj.lpm &&
+        winner.successCount === userScoreObj.successCount &&
+        winner.errorCount === userScoreObj.errorCount
+    );
+
+    // Add user score to temp winners if it doesn't exist already
+    if (existingScoreIndex === -1) {
+      tempWinners.push(userScoreWithWeighted);
     }
 
-    // Sort by weighted score
+    // Sort by weighted score - higher scores first
     const rankedWinners = tempWinners.sort(
       (a, b) => b.weightedScore - a.weightedScore
     );
@@ -150,8 +236,21 @@ const HighScoreCard = ({
           winner.errorCount === userScoreObj.errorCount
       ) + 1;
 
-    setUserRank(rank);
-    setIsTopTen(rank <= 10);
+    // Safeguard against not finding the rank (should never happen now)
+    const finalRank = rank > 0 ? rank : rankedWinners.length;
+
+    console.log(
+      "User rank is",
+      finalRank,
+      "out of",
+      rankedWinners.length,
+      "due to",
+      userScoreObj
+    );
+
+    setUserRank(finalRank);
+    setIsTopTen(finalRank <= 10);
+    return rankedWinners;
   };
 
   // Update user rank when currentUserScore changes
@@ -315,12 +414,20 @@ const HighScoreCard = ({
         </div>
         <ul className="score-list">
           {sortedWinners.map((item, index) => (
-
-            <li className="row" key={`winner-${index + 1}`}>
+            <li
+              className={`row ${
+                item.isCurrentUser ? "current-user-score" : ""
+              }`}
+              key={`winner-${index + 1}`}
+            >
               <p className={`col-2 score-rank rank-${index + 1}`}>
                 {index + 1}
               </p>
-              <p className="col-3">{item.name || "Anonymous"}</p>
+              <p className="col-3">
+                {item.isCurrentUser && !item.name
+                  ? "Your Score"
+                  : item.name || "Anonymous"}
+              </p>
               <p className="col-2">{item.errorCount}</p>
               <p className="col-2">{item.successCount}</p>
               <p className="col-3">{item.lpm}</p>
@@ -370,9 +477,9 @@ const HighScoreCard = ({
         </div>
 
         <SaveCard
-        resetToken={resetSaveForm}
+          resetToken={resetSaveForm}
           specialMessage="Enter your name below."
-          onSave={(name, deviceInfo,) => {
+          onSave={async (name, deviceInfo) => {
             const userScoreWithName = Array.isArray(currentUserScore)
               ? {
                   rank: userRank,
@@ -387,64 +494,36 @@ const HighScoreCard = ({
                       100
                   ),
                 }
-              : { ...currentUserScore, name };
+              : { ...currentUserScore, name, weightedScore: userWeightedScore };
 
-
-            // Get the current winners from localStorage
-            let totalWinners = [];
-            const userDevice = {name, deviceInfo};
             try {
-              const storedWinners = localStorage.getItem("G-Typers");
-              if (storedWinners) {
-                totalWinners = JSON.parse(storedWinners);
+              // Wait for score to be saved
+              await axios.post(
+                "http://127.0.0.1:5000/api/scores/newScore",
+                userScoreWithName
+              );
+
+              // Save device info (don't need to wait)
+              axios.post("http://127.0.0.1:5000/api/device/newUserDevice", {
+                name,
+                deviceInfo,
+              });
+
+              // Update the name in the current display immediately
+              if (isTopTen) {
+                setSortedWinners((prevWinners) =>
+                  prevWinners.map((winner) =>
+                    winner.isCurrentUser ? { ...winner, name } : winner
+                  )
+                );
               }
+
+              // Reload full winners list to ensure everything is in sync
+              await loadWinners();
             } catch (error) {
-              console.error("Error retrieving winners:", error);
+              console.error("Error saving data:", error);
+              alert("There was an error saving your score. Please try again.");
             }
-
-            // try sending data to backend for saving
-            // route http://127.0.0.1:5000/api/scores/newScore
-            try {
-              axios
-                .post(
-                  "http://127.0.0.1:5000/api/scores/newScore",
-                  userScoreWithName
-                )
-                .then((response) => {
-                  // console.log("Score saved to backend:", response.data);
-                })
-                .catch((error) => {
-                  console.error("Error saving data to backend:", error);
-                });
-            } catch (error) {
-              console.error("Error saving data to backend:", error);
-            }
-            // route to userDevice
-            try{
-              axios
-                .post(
-                  "http://127.0.0.1:5000/api/device/newUserDevice",
-                  userDevice
-                )
-                .then((response) => {
-                  // console.log("info saved to backend:", response.data);
-                });
-
-            }catch(error){
-              console.error("Error saving data to backend:", error);
-            }
-
-            // Add new score to the list
-            const updatedWinners = [...totalWinners, userScoreWithName]
-              .sort((a, b) => b.lpm - a.lpm)
-              .slice(0, 10); // Keep only top 10 scores
-
-            // Save to localStorage
-            // localStorage.setItem("G-Typers", JSON.stringify(updatedWinners));
-            // console.log("Score saved successfully!");
-
-            // Reload winners to update the display
-            loadWinners();
           }}
         />
         <button onClick={handleScreenshot} className="download-button">
