@@ -2,6 +2,7 @@ import randomwords from "random-words";
 import React, { useEffect, useRef, useState } from "react";
 import HighScoreCard from "../HighScoreCard/HighScoreCard";
 import "./Main.css";
+
 const Main = () => {
   const [words, setWords] = useState([]);
   var errorRef = useRef(null);
@@ -45,7 +46,6 @@ const Main = () => {
   const initWords = () => {
     const generatedWords = generateWords();
     // add 12 spaces in the beginning if needed
-    generatedWords[0] = generatedWords[0];
     setUserScore([0, 0, 0]);
     setWords(generatedWords);
   };
@@ -111,7 +111,6 @@ const Main = () => {
 
     // Track if this is a new character or a deletion
     const isNewCharacter = value.length > inputValue.length;
-    const userLetter = isNewCharacter ? value[valueLength - 1] : null;
     // Check if the user is backspacing
     if (valueLength < inputValue.length) {
       // Check if the last character was correct

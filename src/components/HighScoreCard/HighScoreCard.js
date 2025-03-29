@@ -90,9 +90,21 @@ const HighScoreCard = ({
 
     setIsLoading(true);
     try {
-      const response = await axios.get(
-        "http://127.0.0.1:5000/api/scores/topScores"
+      const apiKey = process.env.REACT_APP_VALID_API_KEYS || "default-api-key";
+      if (!process.env.REACT_APP_VALID_API_KEYS) {
+        console.warn("Warning: REACT_APP_VALID_API_KEYS is not set. Using default key.");
+      }
+
+      console.log(
+        "Grabbing winners from backend... https://g-typer-api-5f9465ba7dda.herokuapp.com/api/scores/topScores"
       );
+      const response = await axios.get(
+        "https://g-typer-api-5f9465ba7dda.herokuapp.com/api/scores/topScores",
+        {
+          headers: { "x-api-key": apiKey },
+        }
+      );
+      console.log("Response from backend:", response.data);
 
       if (response.data && Array.isArray(response.data)) {
         const apiWinners = response.data;
@@ -499,15 +511,18 @@ const HighScoreCard = ({
             try {
               // Wait for score to be saved
               await axios.post(
-                "http://127.0.0.1:5000/api/scores/newScore",
+                "https://g-typer-api-5f9465ba7dda.herokuapp.com/api/scores/newScore",
                 userScoreWithName
               );
 
               // Save device info (don't need to wait)
-              axios.post("http://127.0.0.1:5000/api/device/newUserDevice", {
-                name,
-                deviceInfo,
-              });
+              axios.post(
+                "https://g-typer-api-5f9465ba7dda.herokuapp.com/api/device/newUserDevice",
+                {
+                  name,
+                  deviceInfo,
+                }
+              );
 
               // Update the name in the current display immediately
               if (isTopTen) {
