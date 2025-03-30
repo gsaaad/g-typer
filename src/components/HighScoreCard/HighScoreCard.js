@@ -3,7 +3,7 @@ import html2canvas from "html2canvas";
 import { useEffect, useState } from "react";
 import SaveCard from "../SaveCard/SaveCard";
 import "./HighScoreCard.css";
-
+import { scoreService } from "../../services/api"; // Adjust the import path as necessary
 const HighScoreCard = ({
   styleHighScoreComponent,
   handleShowComponent,
@@ -56,65 +56,28 @@ const HighScoreCard = ({
     setResetSaveForm((prev) => prev + 1);
   };
 
-  // Function to load winners from localStorage and process them
-  // const loadWinners = async () => {
-  //   // Prevent duplicate calls
-  //   if (isLoading) return;
-
-  //   setIsLoading(true);
-  //   try {
-  //     const response = await axios.get(
-  //       "http://127.0.0.1:5000/api/scores/topScores"
-  //     );
-
-  //     if (response.data && Array.isArray(response.data)) {
-  //       const processed = response.data;
-
-  //       setSortedWinners(processed);
-
-  //       // Update user rank if we have a score
-  //       if (currentUserScore) {
-  //         calculateUserRank(processed, currentUserScore);
-  //       }
-  //     }
-  //   } catch (error) {
-  //     console.error("Error retrieving winners from backend:", error);
-  //   } finally {
-  //     setIsLoading(false);
-  //   }
-  // };
 
   const loadWinners = async () => {
     // Prevent duplicate calls
     if (isLoading) return;
 
     setIsLoading(true);
-    try {
-      const apiKey = process.env.REACT_APP_VALID_API_KEYS || "default-api-key";
-      if (!process.env.REACT_APP_VALID_API_KEYS) {
-        console.warn("Warning: REACT_APP_VALID_API_KEYS is not set. Using default key.");
-      }
-
-      console.log(
-        "Grabbing winners from backend... https://g-typer-api-5f9465ba7dda.herokuapp.com/api/scores/topScores"
-      );
-      const response = await axios.get(
-        "https://g-typer-api-5f9465ba7dda.herokuapp.com/api/scores/topScores",
-        {
-          headers: { "x-api-key": apiKey },
-        }
-      );
+    try{
+      // Fetch winners from the score service API
+      const response = await scoreService.getTopScores();
       console.log("Response from backend:", response.data);
 
+
+      // Check if the response data is in the expected format (an array)
       if (response.data && Array.isArray(response.data)) {
         const apiWinners = response.data;
 
-        // Process scores and integrate user's score if needed
+        // Process winners if there's a current user score available
         if (currentUserScore) {
-          // Create a copy of the winners for manipulation
+          // Make a copy of the winners array for manipulation
           const processedWinners = [...apiWinners];
 
-          // Convert user score to required format
+          // Normalize currentUserScore to an object if it's an array
           const userScoreObj = Array.isArray(currentUserScore)
             ? {
                 errorCount: currentUserScore[0],
@@ -123,7 +86,7 @@ const HighScoreCard = ({
               }
             : currentUserScore;
 
-          // Calculate weighted score for current user
+          // Calculate the weighted score for the current user
           const weighted = calculateWeightedScore(
             userScoreObj.lpm,
             userScoreObj.errorCount,
@@ -131,17 +94,15 @@ const HighScoreCard = ({
           );
           setUserWeightedScore(weighted);
 
-          // Create user score object with weighted score
+          // Build the user score object with additional properties
           const userScoreWithWeighted = {
             ...userScoreObj,
             weightedScore: weighted,
-            // Use temporary name if not yet submitted
             name: userScoreObj.name || "Your Score",
-            // Add a flag to highlight this row in the UI
             isCurrentUser: true,
           };
 
-          // Check if user's score already exists in the list (by exact match)
+          // Check if the user's score already exists in the winners list
           const existingScoreIndex = processedWinners.findIndex(
             (winner) =>
               winner.lpm === userScoreObj.lpm &&
@@ -149,50 +110,53 @@ const HighScoreCard = ({
               winner.errorCount === userScoreObj.errorCount
           );
 
-          // Only add user's score if it doesn't exist
           if (existingScoreIndex === -1) {
+            // Add the user's score if it doesn't exist
             processedWinners.push(userScoreWithWeighted);
           } else {
-            // Mark the existing entry as the current user
+            // Mark the existing score as the current user's score
             processedWinners[existingScoreIndex].isCurrentUser = true;
             if (!processedWinners[existingScoreIndex].name) {
               processedWinners[existingScoreIndex].name = "Your Score";
             }
           }
 
-          // Sort by weighted score - higher scores first
+          // Sort winners by weightedScore in descending order (use 0 as fallback)
           const rankedWinners = processedWinners.sort(
-            (a, b) => b.weightedScore - a.weightedScore
+            (a, b) => (b.weightedScore || 0) - (a.weightedScore || 0)
           );
 
-          // Find user's position in the ranked list
-          const rank =
-            rankedWinners.findIndex((winner) => winner.isCurrentUser) + 1;
-          const finalRank = rank > 0 ? rank : rankedWinners.length;
+          // Determine the user's rank (1-indexed)
+          const rankIndex = rankedWinners.findIndex(
+            (winner) => winner.isCurrentUser
+          );
+          const finalRank =
+            rankIndex !== -1 ? rankIndex + 1 : rankedWinners.length;
 
           setUserRank(finalRank);
           setIsTopTen(finalRank <= 10);
 
-          // If user is in top 10, ensure their score is visible in the displayed list
-          // Otherwise just show the original top 10 from the API
+          // Show top 10 winners; if user is in top 10, ensure their score is visible
           if (finalRank <= 10) {
-            // Get top 10 scores, ensuring user's score is included
             setSortedWinners(rankedWinners.slice(0, 10));
           } else {
             setSortedWinners(apiWinners.slice(0, 10));
           }
         } else {
-          // No user score, just show the top 10 from API
+          // No current user score, so just show the top 10 winners from the API
           setSortedWinners(apiWinners.slice(0, 10));
         }
+      } else {
+        console.warn("Unexpected response format:", response.data);
       }
     } catch (error) {
       console.error("Error retrieving winners from backend:", error);
     } finally {
       setIsLoading(false);
     }
-  };
 
+
+  };
   // Function to calculate user's rank
   const calculateUserRank = (winners, userScore) => {
     // Convert array score to object if needed
