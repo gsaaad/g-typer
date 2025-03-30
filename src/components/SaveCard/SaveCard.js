@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import "./SaveCard.css";
-import deviceInfo from "../../deviceTracker";
 
 const SaveCard = ({ onSave, specialMessage, resetToken}) => {
   const [playerName, setPlayerName] = useState("");
@@ -17,13 +16,7 @@ const SaveCard = ({ onSave, specialMessage, resetToken}) => {
       alert("Please enter your name");
       return;
     }
-
-    // call device info function
-    const userDeviceInfo = deviceInfo();
-    // console.log("deviceInfo", userDeviceInfo);
-
-    // Call the onSave function and include device information
-    onSave(playerName, userDeviceInfo);
+    onSave(playerName);
 
     // Show success state
     setIsSaved(true);

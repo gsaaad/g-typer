@@ -455,7 +455,7 @@ const HighScoreCard = ({
         <SaveCard
           resetToken={resetSaveForm}
           specialMessage="Enter your name below."
-          onSave={async (name, deviceInfo) => {
+          onSave={async (name) => {
             const userScoreWithName = Array.isArray(currentUserScore)
               ? {
                   rank: userRank,
@@ -479,14 +479,6 @@ const HighScoreCard = ({
                 userScoreWithName
               );
 
-              // Save device info (don't need to wait)
-              axios.post(
-                "https://g-typer-api-5f9465ba7dda.herokuapp.com/api/device/newUserDevice",
-                {
-                  name,
-                  deviceInfo,
-                }
-              );
 
               // Update the name in the current display immediately
               if (isTopTen) {

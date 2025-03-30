@@ -16,7 +16,5 @@ const api = axios.create({
 // Score-related API functions
 export const scoreService = {
   getTopScores: () => api.get("/api/scores/topScores"),
-  saveScore: (scoreData) => api.post("/api/scores/newScore", scoreData),
-  saveDeviceInfo: (deviceData) =>
-    api.post("/api/device/newUserDevice", deviceData),
+  saveScore: (scoreData) => api.post("/api/scores/newScore", scoreData)
 };
