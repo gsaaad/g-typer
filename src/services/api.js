@@ -2,7 +2,7 @@
 import axios from "axios";
 
 const API_BASE_URL = "https://g-typer-api-5f9465ba7dda.herokuapp.com/";
-const apiKey = process.env.REACT_APP_VALID_API_KEYS || "default-api-key";
+const apiKey = process.env.REACT_APP_VALID_API_KEYS || undefined
 
 // Create axios instance with default config
 const api = axios.create({
