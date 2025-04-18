@@ -2,7 +2,14 @@
 import axios from "axios";
 
 const API_BASE_URL = "https://g-typer-api-5f9465ba7dda.herokuapp.com/";
-const apiKey = process.env.REACT_APP_VALID_API_KEYS || undefined
+
+// For GitHub Pages, environment variables need to be prefixed with REACT_APP_ and
+// must be included during the build process
+const apiKey =
+  process.env.REACT_APP_VALID_API_KEYS ||
+  (process.env.NODE_ENV === "production"
+    ? "__RUNTIME_INJECTED_API_KEY__"
+    : undefined);
 
 // Create axios instance with default config
 const api = axios.create({
@@ -16,5 +23,5 @@ const api = axios.create({
 // Score-related API functions
 export const scoreService = {
   getTopScores: () => api.get("/api/scores/topScores"),
-  saveScore: (scoreData) => api.post("/api/scores/newScore", scoreData)
+  saveScore: (scoreData) => api.post("/api/scores/newScore", scoreData),
 };
