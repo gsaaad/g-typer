@@ -389,7 +389,18 @@ const HighScoreCard = ({
           <p className="col-3">Correct LPM</p>
         </div>
         <ul className="score-list">
-          {sortedWinners.map((item, index) => (
+          {isLoading ? (
+            <li className="row">
+              <p className="col-12" style={{ textAlign: 'center' }}>Loading scores...</p>
+            </li>
+          ) : sortedWinners.length === 0 ? (
+            <li className="row">
+              <p className="col-12" style={{ textAlign: 'center' }}>
+                Unable to load scores. Please try again later.
+              </p>
+            </li>
+          ) : (
+            sortedWinners.map((item, index) => (
             <li
               className={`row ${
                 item.isCurrentUser ? "current-user-score" : ""
@@ -408,7 +419,7 @@ const HighScoreCard = ({
               <p className="col-2">{item.successCount}</p>
               <p className="col-3">{item.lpm}</p>
             </li>
-          ))}
+          )))}
         </ul>
       </div>
 
@@ -473,11 +484,8 @@ const HighScoreCard = ({
               : { ...currentUserScore, name, weightedScore: userWeightedScore };
 
             try {
-              // Wait for score to be saved
-              await axios.post(
-                "https://g-typer-api-5f9465ba7dda.herokuapp.com/api/scores/newScore",
-                userScoreWithName
-              );
+              // Wait for score to be saved using the score service
+              await scoreService.saveScore(userScoreWithName);
 
 
               // Update the name in the current display immediately
