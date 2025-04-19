@@ -431,7 +431,7 @@ const HighScoreCard = ({
                   fontSize: '12px'
                 }}>
                   <p>Debug Information:</p>
-                  <p>API URL: {API_BASE_URL}</p>
+                  <p>API URL: {process.env.REACT_APP_API_BASE_URL}</p>
                   <p>Environment: {process.env.NODE_ENV}</p>
                   <p>API Key Present: {process.env.REACT_APP_VALID_API_KEYS ? 'Yes' : 'No'}</p>
                   <p>Current Time: {new Date().toISOString()}</p>
