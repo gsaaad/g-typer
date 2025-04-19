@@ -1,9 +1,8 @@
-import axios from "axios";
 import html2canvas from "html2canvas";
 import { useEffect, useState } from "react";
+import { scoreService } from "../../services/api"; // Adjust the import path as necessary
 import SaveCard from "../SaveCard/SaveCard";
 import "./HighScoreCard.css";
-import { scoreService } from "../../services/api"; // Adjust the import path as necessary
 const HighScoreCard = ({
   styleHighScoreComponent,
   handleShowComponent,
@@ -57,17 +56,15 @@ const HighScoreCard = ({
     setResetSaveForm((prev) => prev + 1);
   };
 
-
   const loadWinners = async () => {
     // Prevent duplicate calls
     if (isLoading) return;
 
     setIsLoading(true);
-    try{
+    try {
       // Fetch winners from the score service API
       const response = await scoreService.getTopScores();
       console.log("Response from backend:", response.data);
-
 
       // Check if the response data is in the expected format (an array)
       if (response.data && Array.isArray(response.data)) {
@@ -153,13 +150,14 @@ const HighScoreCard = ({
       }
     } catch (error) {
       console.error("Error retrieving winners from backend:", error);
-      const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+      const errorMessage =
+        error.response?.data?.message ||
+        error.message ||
+        "Unknown error occurred";
       setError(`Connection error: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
-
-
   };
   // Function to calculate user's rank
   const calculateUserRank = (winners, userScore) => {
@@ -395,76 +393,95 @@ const HighScoreCard = ({
         <ul className="score-list">
           {isLoading ? (
             <li className="row">
-              <p className="col-12" style={{ textAlign: 'center' }}>Loading scores...</p>
+              <p className="col-12" style={{ textAlign: "center" }}>
+                Loading scores...
+              </p>
             </li>
           ) : error ? (
             <li className="row">
-              <p className="col-12" style={{ textAlign: 'center', color: '#ff6b6b' }}>
+              <p
+                className="col-12"
+                style={{ textAlign: "center", color: "#ff6b6b" }}
+              >
                 {error}
               </p>
-              <div className="col-12" style={{ textAlign: 'center', marginTop: '10px' }}>
+              <div
+                className="col-12"
+                style={{ textAlign: "center", marginTop: "10px" }}
+              >
                 <button
                   onClick={() => {
                     setError(null);
                     loadWinners();
                   }}
                   style={{
-                    padding: '8px 16px',
-                    background: '#074994',
-                    border: 'none',
-                    borderRadius: '4px',
-                    color: 'white',
-                    cursor: 'pointer',
-                    marginBottom: '10px'
+                    padding: "8px 16px",
+                    background: "#074994",
+                    border: "none",
+                    borderRadius: "4px",
+                    color: "white",
+                    cursor: "pointer",
+                    marginBottom: "10px",
                   }}
                 >
                   Retry Connection
                 </button>
               </div>
-              {process.env.NODE_ENV === 'development' && (
-                <div className="col-12" style={{
-                  textAlign: 'left',
-                  padding: '10px',
-                  background: '#2d2d2d',
-                  borderRadius: '4px',
-                  margin: '10px',
-                  fontSize: '12px'
-                }}>
+              {process.env.NODE_ENV === "development" && (
+                <div
+                  className="col-12"
+                  style={{
+                    textAlign: "left",
+                    padding: "10px",
+                    background: "#2d2d2d",
+                    borderRadius: "4px",
+                    margin: "10px",
+                    fontSize: "12px",
+                  }}
+                >
                   <p>Debug Information:</p>
-                  <p>API URL: {process.env.REACT_APP_API_BASE_URL}</p>
+                  <p>
+                    API URL:{" "}
+                    {process.env.REACT_APP_API_BASE_URL ||
+                      "https://g-typer-api-5f9465ba7dda.herokuapp.com"}
+                  </p>
                   <p>Environment: {process.env.NODE_ENV}</p>
-                  <p>API Key Present: {process.env.REACT_APP_VALID_API_KEYS ? 'Yes' : 'No'}</p>
+                  <p>
+                    API Key Present:{" "}
+                    {process.env.REACT_APP_VALID_API_KEYS ? "Yes" : "No"}
+                  </p>
                   <p>Current Time: {new Date().toISOString()}</p>
                 </div>
               )}
             </li>
           ) : sortedWinners.length === 0 ? (
             <li className="row">
-              <p className="col-12" style={{ textAlign: 'center' }}>
+              <p className="col-12" style={{ textAlign: "center" }}>
                 No scores available.
               </p>
             </li>
           ) : (
             sortedWinners.map((item, index) => (
-            <li
-              className={`row ${
-                item.isCurrentUser ? "current-user-score" : ""
-              }`}
-              key={`winner-${index + 1}`}
-            >
-              <p className={`col-2 score-rank rank-${index + 1}`}>
-                {index + 1}
-              </p>
-              <p className="col-3">
-                {item.isCurrentUser && !item.name
-                  ? "Your Score"
-                  : item.name || "Anonymous"}
-              </p>
-              <p className="col-2">{item.errorCount}</p>
-              <p className="col-2">{item.successCount}</p>
-              <p className="col-3">{item.lpm}</p>
-            </li>
-          )))}
+              <li
+                className={`row ${
+                  item.isCurrentUser ? "current-user-score" : ""
+                }`}
+                key={`winner-${index + 1}`}
+              >
+                <p className={`col-2 score-rank rank-${index + 1}`}>
+                  {index + 1}
+                </p>
+                <p className="col-3">
+                  {item.isCurrentUser && !item.name
+                    ? "Your Score"
+                    : item.name || "Anonymous"}
+                </p>
+                <p className="col-2">{item.errorCount}</p>
+                <p className="col-2">{item.successCount}</p>
+                <p className="col-3">{item.lpm}</p>
+              </li>
+            ))
+          )}
         </ul>
       </div>
 
@@ -532,7 +549,6 @@ const HighScoreCard = ({
               // Wait for score to be saved using the score service
               await scoreService.saveScore(userScoreWithName);
 
-
               // Update the name in the current display immediately
               if (isTopTen) {
                 setSortedWinners((prevWinners) =>
@@ -546,7 +562,10 @@ const HighScoreCard = ({
               await loadWinners();
             } catch (error) {
               console.error("Error saving data:", error);
-              const errorMessage = error.response?.data?.message || error.message || "Unknown error";
+              const errorMessage =
+                error.response?.data?.message ||
+                error.message ||
+                "Unknown error";
               setError(`Failed to save score: ${errorMessage}`);
             }
           }}
