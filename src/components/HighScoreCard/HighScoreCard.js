@@ -16,6 +16,7 @@ const HighScoreCard = ({
   const [userWeightedScore, setUserWeightedScore] = useState(0);
   const [resetSaveForm, setResetSaveForm] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   const calculateWeightedScore = (lpm, errorCount, successCount) => {
     // Calculate accuracy percentage
@@ -148,9 +149,12 @@ const HighScoreCard = ({
         }
       } else {
         console.warn("Unexpected response format:", response.data);
+        setError("Unexpected data format received from server");
       }
     } catch (error) {
       console.error("Error retrieving winners from backend:", error);
+      const errorMessage = error.response?.data?.message || error.message || "Unknown error occurred";
+      setError(`Connection error: ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }
@@ -393,10 +397,51 @@ const HighScoreCard = ({
             <li className="row">
               <p className="col-12" style={{ textAlign: 'center' }}>Loading scores...</p>
             </li>
+          ) : error ? (
+            <li className="row">
+              <p className="col-12" style={{ textAlign: 'center', color: '#ff6b6b' }}>
+                {error}
+              </p>
+              <div className="col-12" style={{ textAlign: 'center', marginTop: '10px' }}>
+                <button
+                  onClick={() => {
+                    setError(null);
+                    loadWinners();
+                  }}
+                  style={{
+                    padding: '8px 16px',
+                    background: '#074994',
+                    border: 'none',
+                    borderRadius: '4px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    marginBottom: '10px'
+                  }}
+                >
+                  Retry Connection
+                </button>
+              </div>
+              {process.env.NODE_ENV === 'development' && (
+                <div className="col-12" style={{
+                  textAlign: 'left',
+                  padding: '10px',
+                  background: '#2d2d2d',
+                  borderRadius: '4px',
+                  margin: '10px',
+                  fontSize: '12px'
+                }}>
+                  <p>Debug Information:</p>
+                  <p>API URL: {API_BASE_URL}</p>
+                  <p>Environment: {process.env.NODE_ENV}</p>
+                  <p>API Key Present: {process.env.REACT_APP_VALID_API_KEYS ? 'Yes' : 'No'}</p>
+                  <p>Current Time: {new Date().toISOString()}</p>
+                </div>
+              )}
+            </li>
           ) : sortedWinners.length === 0 ? (
             <li className="row">
               <p className="col-12" style={{ textAlign: 'center' }}>
-                Unable to load scores. Please try again later.
+                No scores available.
               </p>
             </li>
           ) : (
@@ -501,7 +546,8 @@ const HighScoreCard = ({
               await loadWinners();
             } catch (error) {
               console.error("Error saving data:", error);
-              alert("There was an error saving your score. Please try again.");
+              const errorMessage = error.response?.data?.message || error.message || "Unknown error";
+              setError(`Failed to save score: ${errorMessage}`);
             }
           }}
         />
